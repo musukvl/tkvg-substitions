@@ -1,4 +1,4 @@
-namespace TkvgSubstitutionBot.Models;
+namespace TkvgSubstitution.Models;
 
 public class Substitution
 {

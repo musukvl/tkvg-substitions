@@ -1,4 +1,4 @@
-﻿namespace TkvgSubstitutionBot;
+﻿namespace TkvgSubstitution;
 
 public static class Utils 
 {

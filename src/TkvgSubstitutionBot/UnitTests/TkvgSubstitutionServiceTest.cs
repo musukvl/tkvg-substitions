@@ -1,4 +1,5 @@
-﻿using TkvgSubstitutionBot;
+﻿
+using TkvgSubstitution;
 
 namespace UnitTests
 {

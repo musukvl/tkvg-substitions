@@ -1,5 +1,5 @@
 ﻿
-namespace TkvgSubstitutionBot;
+namespace TkvgSubstitution;
 
 public class TkvgHttpClient
 {

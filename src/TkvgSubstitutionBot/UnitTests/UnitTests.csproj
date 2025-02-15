@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TkvgSubstitutionBot\TkvgSubstitutionBot.csproj" />
+    <ProjectReference Include="..\TkvgSubstitution\TkvgSubstitution.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,9 +1,8 @@
-﻿using HtmlAgilityPack;
-using System.Net.Http.Json;
-using System.Text.Json.Nodes;
-using TkvgSubstitutionBot.Models;
+﻿using System.Text.Json.Nodes;
+using HtmlAgilityPack;
+using TkvgSubstitution.Models;
 
-namespace TkvgSubstitutionBot;
+namespace TkvgSubstitution;
 
 public class TkvgSubstitutionService
 {
