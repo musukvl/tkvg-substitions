@@ -9,6 +9,7 @@
     </PropertyGroup>
     
     <ItemGroup>
+      <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.2" />
       <PackageReference Include="Telegram.Bot" Version="22.4.2" />
       <PackageReference Include="NetEscapades.Configuration.Yaml" Version="3.1.0" />
       <PackageReference Include="Serilog" Version="4.2.0" />
@@ -21,6 +22,10 @@
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\TkvgSubstitution\TkvgSubstitution.csproj" />
     </ItemGroup>
 
 </Project>

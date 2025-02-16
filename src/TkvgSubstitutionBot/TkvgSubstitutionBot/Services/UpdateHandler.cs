@@ -8,7 +8,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace TkvgSubstitutionBot.Services;
 
-public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger) : IUpdateHandler
+public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger, SubstitutionFrontendService substitutionService) : IUpdateHandler
 {
     private static readonly InputPollOption[] PollOptions = ["Hello", "World!"];
 
@@ -30,8 +30,7 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
             { CallbackQuery: { } callbackQuery }            => OnCallbackQuery(callbackQuery),
             { InlineQuery: { } inlineQuery }                => OnInlineQuery(inlineQuery),
             { ChosenInlineResult: { } chosenInlineResult }  => OnChosenInlineResult(chosenInlineResult),
-            { Poll: { } poll }                              => OnPoll(poll),
-            { PollAnswer: { } pollAnswer }                  => OnPollAnswer(pollAnswer),
+
             // UpdateType.ChannelPost:
             // UpdateType.EditedChannelPost:
             // UpdateType.ShippingQuery:
@@ -48,15 +47,8 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
 
         Message sentMessage = await (messageText.Split(' ')[0] switch
         {
-            "/photo" => SendPhoto(msg),
-            "/inline_buttons" => SendInlineKeyboard(msg),
-            "/keyboard" => SendReplyKeyboard(msg),
-            "/remove" => RemoveKeyboard(msg),
-            "/request" => RequestContactAndLocation(msg),
-            "/inline_mode" => StartInlineQuery(msg),
-            "/poll" => SendPoll(msg),
-            "/poll_anonymous" => SendAnonymousPoll(msg),
-            "/throw" => FailingHandler(msg),
+            "/next_day_substitutions" => NextDaySubstitutionKeyboard(msg),
+            "/today_substitutions" => CurrentDaySubstitutionKeyboard(msg),
             _ => Usage(msg)
         });
         
@@ -67,87 +59,55 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
     {
         const string usage = """
                 <b><u>Bot menu</u></b>:
-                /photo          - send a photo
-                /inline_buttons - send inline buttons
-                /keyboard       - send keyboard buttons
-                /remove         - remove keyboard buttons
-                /request        - request location or contact
-                /inline_mode    - send inline-mode results list
-                /poll           - send a poll
-                /poll_anonymous - send an anonymous poll
-                /throw          - what happens if handler fails
+                /next_day_substitutions
+                /today_substitutions
             """;
         return await bot.SendMessage(msg.Chat, usage, parseMode: ParseMode.Html, replyMarkup: new ReplyKeyboardRemove());
     }
-
-    async Task<Message> SendPhoto(Message msg)
-    {
-        await bot.SendChatAction(msg.Chat, ChatAction.UploadPhoto);
-        await Task.Delay(2000); // simulate a long task
-        await using var fileStream = new FileStream("Files/bot.gif", FileMode.Open, FileAccess.Read);
-        return await bot.SendPhoto(msg.Chat, fileStream, caption: "Read https://telegrambots.github.io/book/");
-    }
-
-    // Send inline keyboard. You can process responses in OnCallbackQuery handler
-    async Task<Message> SendInlineKeyboard(Message msg)
+    
+    async Task<Message> NextDaySubstitutionKeyboard(Message msg)
     {
         var inlineMarkup = new InlineKeyboardMarkup()
-            .AddNewRow("1.1", "1.2", "1.3")
             .AddNewRow()
-                .AddButton("WithCallbackData", "CallbackData")
-                .AddButton(InlineKeyboardButton.WithUrl("WithUrl", "https://github.com/TelegramBots/Telegram.Bot"));
-        return await bot.SendMessage(msg.Chat, "Inline buttons:", replyMarkup: inlineMarkup);
+                .AddButton("2A", "next_day_substitutions:2a")
+                .AddButton("3B", "next_day_substitutions:3b")
+                .AddButton("6D", "next_day_substitutions:6d")
+            .AddNewRow()
+                .AddButton("All", "next_day_substitutions:all")
+            ;
+        return await bot.SendMessage(msg.Chat, "Next Day Substitutions. Pick Class:", replyMarkup: inlineMarkup);
     }
-
-    async Task<Message> SendReplyKeyboard(Message msg)
+    
+    async Task<Message> CurrentDaySubstitutionKeyboard(Message msg)
     {
-        var replyMarkup = new ReplyKeyboardMarkup(true)
-            .AddNewRow("1.1", "1.2", "1.3")
-            .AddNewRow().AddButton("2.1").AddButton("2.2");
-        return await bot.SendMessage(msg.Chat, "Keyboard buttons:", replyMarkup: replyMarkup);
+        var inlineMarkup = new InlineKeyboardMarkup()
+                .AddNewRow()
+                .AddButton("2A", "today_substitutions:2a")
+                .AddButton("3B", "today_substitutions:3b")
+                .AddButton("6D", "today_substitutions:6d")
+                .AddNewRow()
+                .AddButton("All", "today_substitutions:all")
+            ;
+        return await bot.SendMessage(msg.Chat, "Today Substitutions. Pick Class:", replyMarkup: inlineMarkup);
     }
-
-    async Task<Message> RemoveKeyboard(Message msg)
-    {
-        return await bot.SendMessage(msg.Chat, "Removing keyboard", replyMarkup: new ReplyKeyboardRemove());
-    }
-
-    async Task<Message> RequestContactAndLocation(Message msg)
-    {
-        var replyMarkup = new ReplyKeyboardMarkup(true)
-            .AddButton(KeyboardButton.WithRequestLocation("Location"))
-            .AddButton(KeyboardButton.WithRequestContact("Contact"));
-        return await bot.SendMessage(msg.Chat, "Who or Where are you?", replyMarkup: replyMarkup);
-    }
-
-    async Task<Message> StartInlineQuery(Message msg)
-    {
-        var button = InlineKeyboardButton.WithSwitchInlineQueryCurrentChat("Inline Mode");
-        return await bot.SendMessage(msg.Chat, "Press the button to start Inline Query\n\n" +
-            "(Make sure you enabled Inline Mode in @BotFather)", replyMarkup: new InlineKeyboardMarkup(button));
-    }
-
-    async Task<Message> SendPoll(Message msg)
-    {
-        return await bot.SendPoll(msg.Chat, "Question", PollOptions, isAnonymous: false);
-    }
-
-    async Task<Message> SendAnonymousPoll(Message msg)
-    {
-        return await bot.SendPoll(chatId: msg.Chat, "Question", PollOptions);
-    }
-
-    static Task<Message> FailingHandler(Message msg)
-    {
-        throw new NotImplementedException("FailingHandler");
-    }
-
+    
+    
     // Process Inline Keyboard callback data
     private async Task OnCallbackQuery(CallbackQuery callbackQuery)
     {
         logger.LogInformation("Received inline keyboard callback from: {CallbackQueryId}", callbackQuery.Id);
-        await bot.AnswerCallbackQuery(callbackQuery.Id, $"Received {callbackQuery.Data}");
-        await bot.SendMessage(callbackQuery.Message!.Chat, $"Received {callbackQuery.Data}");
+        var operation = callbackQuery.Data?.Split(":")[0];
+        var className = callbackQuery.Data?.Split(":")[1];
+        className = className == "all" ? null : className;
+
+        string messageResult = operation switch
+        {
+            "today_substitutions" => await substitutionService.GetTodaySubstitutions(className),
+            "next_day_substitutions" => await substitutionService.GetNextDaySubstitutions(className),
+            _ => ""
+        };
+        await bot.AnswerCallbackQuery(callbackQuery.Id, "Processing...");
+        await bot.SendMessage(callbackQuery.Message!.Chat, messageResult, parseMode: ParseMode.None);
     }
 
     #region Inline Mode
@@ -170,20 +130,7 @@ public class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger
     }
 
     #endregion
-
-    private Task OnPoll(Poll poll)
-    {
-        logger.LogInformation("Received Poll info: {Question}", poll.Question);
-        return Task.CompletedTask;
-    }
-
-    private async Task OnPollAnswer(PollAnswer pollAnswer)
-    {
-        var answer = pollAnswer.OptionIds.FirstOrDefault();
-        var selectedOption = PollOptions[answer];
-        if (pollAnswer.User != null)
-            await bot.SendMessage(pollAnswer.User.Id, $"You've chosen: {selectedOption.Text} in poll");
-    }
+    
 
     private Task UnknownUpdateHandlerAsync(Update update)
     {

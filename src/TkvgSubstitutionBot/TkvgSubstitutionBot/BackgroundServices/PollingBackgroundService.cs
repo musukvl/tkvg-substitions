@@ -1,3 +1,5 @@
+using Telegram.Bot;
+using Telegram.Bot.Types;
 using TkvgSubstitutionBot.Services;
 
 namespace TkvgSubstitutionBot.BackgroundServices;
@@ -15,6 +17,14 @@ public class PollingBackgroundService(IServiceProvider serviceProvider, ILogger<
 
     private async Task DoWork(CancellationToken stoppingToken)
     {
+        var bot = serviceProvider.GetRequiredService<ITelegramBotClient>();
+        await bot.SetMyCommands(new[]
+        {
+            new BotCommand { Command = "next_day_substitutions", Description = "Next working day substitutions" },
+            new BotCommand { Command = "today_substitutions", Description = "Today substitutions" },
+        });
+        
+        
         // Make sure we receive updates until Cancellation Requested
         while (!stoppingToken.IsCancellationRequested)
         {

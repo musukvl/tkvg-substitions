@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Telegram.Bot;
+using TkvgSubstitution;
 using TkvgSubstitutionBot;
 using TkvgSubstitutionBot.BackgroundServices;
 using TkvgSubstitutionBot.Services;
@@ -29,8 +30,12 @@ builder.Services.AddHttpClient("telegram_bot_client").RemoveAllLoggers()
         return new TelegramBotClient(options, httpClient);
     });
 
+builder.Services.AddSingleton<TkvgSubstitutionService>();
+builder.Services.AddSingleton<SubstitutionFrontendService>();
+
 builder.Services.AddScoped<UpdateHandler>();
 builder.Services.AddScoped<ReceiverService>();
+
 builder.Services.AddHostedService<PollingBackgroundService>();
 builder.Services.AddHostedService<PeriodicalCheckService>();
  
