@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // yaml instead of json just because yaml is more human-readable
 builder.Configuration.AddYamlFile("appsettings.yml", optional: false, reloadOnChange: true);
+builder.Configuration.AddYamlFile("appsettings.local.yml", optional: true, reloadOnChange: true);
 builder.Configuration.AddEnvironmentVariables();
 builder.Configuration.AddUserSecrets<Program>();
 

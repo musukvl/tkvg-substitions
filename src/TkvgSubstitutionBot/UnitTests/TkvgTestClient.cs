@@ -9,6 +9,6 @@ namespace UnitTests;
         {
             var client = new TkvgHttpClient();
             var result = await client.GetSubstitutionsHtml("2025-02-17");
-            result = result;
+            Assert.NotEmpty(result);
         }
     }

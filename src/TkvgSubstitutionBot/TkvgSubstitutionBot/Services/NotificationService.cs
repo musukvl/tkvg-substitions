@@ -1,14 +1,14 @@
 ﻿namespace TkvgSubstitutionBot.Services;
 
-public class ChatInfo
+public record ChatInfo
 {
-    public long ChatId { get; set; }
-    public string ClassName { get; set; }
+    public required long ChatId { get; set; }
+    public required string ClassName { get; set; }
 }
 
 public class NotificationService
 {
-    public Dictionary<string, ChatInfo> ChatInfos { get; } = new();
+    private Dictionary<string, ChatInfo> ChatInfos { get; } = new();
     
     public void SetChatInfo(long chatId, string className)
     {

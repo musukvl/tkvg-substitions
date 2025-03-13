@@ -10,7 +10,7 @@ namespace UnitTests
         {
             var client = new TkvgSubstitutionService();
             var value = await client.GetSubstitutions("2025-02-17");
-            value = value;
+            Assert.NotEmpty(value);
         }
     }
 }

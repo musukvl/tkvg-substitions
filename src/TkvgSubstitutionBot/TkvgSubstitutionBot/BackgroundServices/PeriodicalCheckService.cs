@@ -13,7 +13,8 @@ public class PeriodicalCheckService : BackgroundService
         _botClient = botClient;
     }
     
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        return Task.CompletedTask;
     }
 }
