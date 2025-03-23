@@ -56,9 +56,9 @@ public partial class UpdateHandler
 
         string messageResult = operation switch
         {
-            "today_substitutions" => await substitutionService.GetTodaySubstitutions(className),
-            "next_day_substitutions" => await substitutionService.GetNextDaySubstitutions(className),
-            "add_subscription" => "Subscribed to " + className,
+            "today_substitutions" => await frontend.GetTodaySubstitutions(className),
+            "next_day_substitutions" => await frontend.GetNextDaySubstitutions(className),
+            "add_subscription" => await frontend.AddSubscription(callbackQuery.From.Id, className),
             _ => ""
         };
         await bot.AnswerCallbackQuery(callbackQuery.Id, "Processing...");

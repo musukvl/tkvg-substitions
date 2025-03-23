@@ -7,7 +7,7 @@ using TkvgSubstitutionBot.BotServices;
 
 namespace TkvgSubstitutionBot.MessageHandler;
 
-public partial class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger, SubstitutionFrontendService substitutionService) : IUpdateHandler
+public partial class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler> logger, SubstitutionFrontendService frontend) : IUpdateHandler
 {
     public async Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, HandleErrorSource source, CancellationToken cancellationToken)
     {
@@ -51,6 +51,7 @@ public partial class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler
 
     private async Task<Message> Unsubscribe(Message msg)
     {
+        await frontend.RemoveSubscription(msg.Chat.Id);
         return await bot.SendMessage(msg.Chat, "Unsubscribed", parseMode: ParseMode.None);
     }
     

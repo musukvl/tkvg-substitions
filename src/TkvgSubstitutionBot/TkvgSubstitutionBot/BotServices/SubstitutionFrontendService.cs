@@ -1,16 +1,19 @@
 ﻿using System.Text;
 using TkvgSubstitution;
 using TkvgSubstitution.Models;
+using TkvgSubstitutionBot.Subscription;
 
 namespace TkvgSubstitutionBot.BotServices;
 
 public class SubstitutionFrontendService
 {
     private readonly TkvgSubstitutionService _substitutionService;
+    private readonly ChatInfoFileStorage _chatInfoFileStorage;
 
-    public SubstitutionFrontendService(TkvgSubstitutionService substitutionService)
+    public SubstitutionFrontendService(TkvgSubstitutionService substitutionService, ChatInfoFileStorage chatInfoFileStorage)
     {
         _substitutionService = substitutionService;
+        _chatInfoFileStorage = chatInfoFileStorage;
     }
     
     public async Task<string> GetNextDaySubstitutions(string? className)
@@ -50,5 +53,20 @@ public class SubstitutionFrontendService
         if (string.IsNullOrEmpty(result))
             return "No substitutions.";
         return result;
+    }
+
+    public async Task<string> AddSubscription(long chatId, string className)
+    {
+        await _chatInfoFileStorage.SetChatInfo(chatId, new ChatInfo
+        {
+            ChatId = chatId,
+            ClassName = className
+        });
+        return "Subscription added.";
+    }
+
+    public async Task RemoveSubscription(long chatId)
+    {
+        await _chatInfoFileStorage.DeleteChatInfo(chatId);
     }
 }

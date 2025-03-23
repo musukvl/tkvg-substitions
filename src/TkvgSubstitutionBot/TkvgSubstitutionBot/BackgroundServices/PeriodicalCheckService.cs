@@ -1,4 +1,5 @@
 using Telegram.Bot;
+using TkvgSubstitutionBot.Subscription;
 
 namespace TkvgSubstitutionBot.BackgroundServices;
 
@@ -6,11 +7,13 @@ public class PeriodicalCheckService : BackgroundService
 {
     private readonly ILogger<PeriodicalCheckService> _logger;
     private readonly ITelegramBotClient _botClient;
+    private readonly ChatInfoFileStorage _chatInfoFileStorage;
 
-    public PeriodicalCheckService(ILogger<PeriodicalCheckService> logger, ITelegramBotClient botClient)
+    public PeriodicalCheckService(ILogger<PeriodicalCheckService> logger, ITelegramBotClient botClient, ChatInfoFileStorage chatInfoFileStorage)
     {
         _logger = logger;
         _botClient = botClient;
+        _chatInfoFileStorage = chatInfoFileStorage;
     }
     
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -38,8 +41,13 @@ public class PeriodicalCheckService : BackgroundService
 
     private async Task DoPeriodicWork()
     {
-        // Implement your hourly work here
-        // For example:
-        // await _botClient.SendTextMessageAsync(...);
+        var chats = _chatInfoFileStorage.GetChatIds();
+        foreach (var chatId in chats)
+        {
+            var chatInfo = await _chatInfoFileStorage.GetChatInfo(chatId);
+            if (chatInfo == null) continue;
+            
+            
+        }
     }
 }

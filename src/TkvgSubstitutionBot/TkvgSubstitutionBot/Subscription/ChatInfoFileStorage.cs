@@ -1,11 +1,11 @@
-﻿namespace TkvgSubstitutionChats;
-
-using YamlDotNet.Serialization;
+﻿using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-public class ChatInfoFileStorage<T> : IChatInfoStorage<T> where T : IChatInfo, new()
+namespace TkvgSubstitutionBot.Subscription;
+
+
+public class ChatInfoFileStorage 
 {
-    
     private readonly ISerializer _serializer = new SerializerBuilder()
         .WithNamingConvention(CamelCaseNamingConvention.Instance)
         .Build();
@@ -14,19 +14,19 @@ public class ChatInfoFileStorage<T> : IChatInfoStorage<T> where T : IChatInfo, n
         .WithNamingConvention(CamelCaseNamingConvention.Instance)
         .Build();
 
-    public async Task<T> GetChatInfo(long chatId)
+    public async Task<ChatInfo?> GetChatInfo(long chatId)
     {
         var filePath = GetFilePath(chatId);
         if (!File.Exists(filePath))
         {
-            return new T();
+            return null;
         }
 
         var yaml = await File.ReadAllTextAsync(filePath);
-        return _deserializer.Deserialize<T>(yaml);
+        return _deserializer.Deserialize<ChatInfo>(yaml);
     }
 
-    public async Task SetChatInfo(long chatId, T chatInfo)
+    public async Task SetChatInfo(long chatId, ChatInfo chatInfo)
     {
         var filePath = GetFilePath(chatId);
         var yaml = _serializer.Serialize(chatInfo);
@@ -46,10 +46,27 @@ public class ChatInfoFileStorage<T> : IChatInfoStorage<T> where T : IChatInfo, n
     private readonly string _storageDirectory = "chat-info";
     private string GetFilePath(long chatId)
     {
+        EnsureChatInfoDirectory();
+        return Path.Combine(_storageDirectory, $"{chatId}.yaml");
+    }
+
+    private void EnsureChatInfoDirectory()
+    {
         if (!Directory.Exists(_storageDirectory))
         {
             Directory.CreateDirectory(_storageDirectory);
         }
-        return Path.Combine(_storageDirectory, $"{chatId}.yaml");
+    }
+
+    public List<int> GetChatIds()
+    {
+        EnsureChatInfoDirectory();
+        var files = Directory.GetFiles(_storageDirectory);
+        var fileNames=  files
+            .Where(x => Path.GetExtension(x) == ".yaml")
+            .Select(Path.GetFileNameWithoutExtension)
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .ToList();
+        return fileNames.Select(int.Parse).ToList();
     }
 }
