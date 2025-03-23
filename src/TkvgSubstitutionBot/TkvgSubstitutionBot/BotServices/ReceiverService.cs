@@ -1,9 +1,9 @@
 using Telegram.Bot;
 using Telegram.Bot.Polling;
 
-namespace TkvgSubstitutionBot.Services;
+namespace TkvgSubstitutionBot.BotServices;
  
-public class ReceiverService(ITelegramBotClient botClient, UpdateHandler updateHandler, ILogger<ReceiverService> logger)
+public class ReceiverService(ITelegramBotClient botClient, MessageHandler.UpdateHandler updateHandler, ILogger<ReceiverService> logger)
 {
     /// <summary>Start to service Updates with provided Update Handler class</summary>
     public async Task ReceiveAsync(CancellationToken stoppingToken)

@@ -2,7 +2,7 @@
 using TkvgSubstitution;
 using TkvgSubstitution.Models;
 
-namespace TkvgSubstitutionBot.Services;
+namespace TkvgSubstitutionBot.BotServices;
 
 public class SubstitutionFrontendService
 {

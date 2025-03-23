@@ -1,77 +1,31 @@
-﻿using System.Text.Json.Nodes;
-using HtmlAgilityPack;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
+using TkvgSubstitution.Configuration;
 using TkvgSubstitution.Models;
 
 namespace TkvgSubstitution;
 
 public class TkvgSubstitutionService
 {
+    private readonly TkvgSubstitutionReader _substitutionReader;
+    private readonly IMemoryCache _cache;
+    private readonly IOptions<SubstitutionCacheSettings> _cacheSettings;
+
+    public TkvgSubstitutionService(TkvgSubstitutionReader substitutionReader, IMemoryCache memoryCache, IOptions<SubstitutionCacheSettings> cacheSettings)
+    {
+        _substitutionReader = substitutionReader;
+        _cache = memoryCache;
+        _cacheSettings = cacheSettings;
+    }
+
     public async Task<List<ClassSubstitutions>> GetSubstitutions(string date)
     {
-        var client = new TkvgHttpClient();
-        var result = await client.GetSubstitutionsHtml(date);
-        var jsonNode = JsonNode.Parse(result);
-        var content = jsonNode["r"]?.ToString();
-
-        return ParseSubstitutionsHtml(content);
-    }
-
-    private List<ClassSubstitutions> ParseSubstitutionsHtml(string html)
-    {
-        var doc = new HtmlDocument();
-        doc.LoadHtml(html);
-
-        var sections = doc.DocumentNode.SelectNodes("//div[contains(@class, 'section')]");
-        var classSubstitutions = new List<ClassSubstitutions>();
-
-        if (sections == null) return classSubstitutions;
-
-        foreach (var section in sections)
+        var cacheKey = $"substitutions_{date}";
+        
+        return await _cache.GetOrCreateAsync(cacheKey, async entry =>
         {
-            var className = section.SelectSingleNode(".//div[contains(@class, 'header')]")
-                ?.SelectSingleNode(".//span")
-                ?.InnerText.Trim();
-
-            if (string.IsNullOrEmpty(className)) continue;
-
-            var rows = section.SelectNodes(".//div[contains(@class, 'row')]");
-            var substitutions = new List<Substitution>();
-
-            if (rows != null)
-            {
-                foreach (var row in rows)
-                {
-                    var period = row.SelectSingleNode(".//div[contains(@class, 'period')]")
-                        ?.SelectSingleNode(".//span")
-                        ?.InnerText.Trim();
-
-                    var info = row.SelectSingleNode(".//div[contains(@class, 'info')]")
-                        ?.SelectSingleNode(".//span")
-                        ?.InnerText.Trim();
-
-                    var type = row.GetAttributeValue("class", "").Contains("remove") 
-                        ? SubstitutionType.Remove 
-                        : SubstitutionType.Change;
-
-                    if (!string.IsNullOrEmpty(period) && !string.IsNullOrEmpty(info))
-                    {
-                        substitutions.Add(new Substitution
-                        {
-                            Period = period,
-                            Info = info,
-                            Type = type
-                        });
-                    }
-                }
-            }
-
-            classSubstitutions.Add(new ClassSubstitutions
-            {
-                ClassName = className,
-                Substitutions = substitutions
-            });
-        }
-
-        return classSubstitutions;
+            entry.AbsoluteExpirationRelativeToNow = _cacheSettings.Value.CacheDuration;
+            return await _substitutionReader.GetSubstitutions(date);
+        }) ?? new List<ClassSubstitutions>();
     }
-}
+} 

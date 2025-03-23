@@ -1,12 +1,14 @@
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using TkvgSubstitutionBot.Services;
+using TkvgSubstitutionBot.BotServices;
 
 namespace TkvgSubstitutionBot.BackgroundServices;
 
-/// <summary>An abstract class to compose Polling background service and Receiver implementation classes</summary>
-/// <remarks>See more: https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services#consuming-a-scoped-service-in-a-background-task</remarks>
-/// <typeparam name="TReceiverService">Receiver implementation class</typeparam>
+/// <summary>
+/// Background service that polls for updates
+/// </summary>
+/// <param name="serviceProvider"></param>
+/// <param name="logger"></param>
 public class PollingBackgroundService(IServiceProvider serviceProvider, ILogger<PollingBackgroundService> logger) : BackgroundService 
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -22,6 +24,9 @@ public class PollingBackgroundService(IServiceProvider serviceProvider, ILogger<
         {
             new BotCommand { Command = "next_day_substitutions", Description = "Next working day substitutions" },
             new BotCommand { Command = "today_substitutions", Description = "Today substitutions" },
+            new BotCommand { Command = "subscribe", Description = "Subscribe notifications" },
+            new BotCommand { Command = "unsubscribe", Description = "Unsubscribe notifications" },
+            
         });
         
         

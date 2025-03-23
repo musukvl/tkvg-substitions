@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.Options;
 using Telegram.Bot;
 using TkvgSubstitution;
+using TkvgSubstitution.Configuration;
 using TkvgSubstitutionBot;
 using TkvgSubstitutionBot.BackgroundServices;
-using TkvgSubstitutionBot.Services;
+using TkvgSubstitutionBot.BotServices;
+using UpdateHandler = TkvgSubstitutionBot.MessageHandler.UpdateHandler;
 
 // use web application just to have /health endpoint for running in container environment
 var builder = WebApplication.CreateBuilder(args);
@@ -31,14 +33,38 @@ builder.Services.AddHttpClient("telegram_bot_client").RemoveAllLoggers()
         return new TelegramBotClient(options, httpClient);
     });
 
+builder.Services.AddHttpClient<TkvgHttpClient>(client =>
+{
+    client.BaseAddress = new Uri("https://tkvg.edupage.org/");
+});
+
+builder.Services.Configure<SubstitutionCacheSettings>(options =>
+{    
+    var durationStr = builder.Configuration.GetValue<string>("SubstitutionCache:Duration");
+    if (!string.IsNullOrEmpty(durationStr))
+    {
+        options.CacheDuration = Utils.ParseTimeSpan(durationStr);
+    }
+});
+
+ 
+builder.Services.AddMemoryCache(); 
+
+builder.Services.AddSingleton<TkvgSubstitutionReader>();
 builder.Services.AddSingleton<TkvgSubstitutionService>();
 builder.Services.AddSingleton<SubstitutionFrontendService>();
 
-builder.Services.AddScoped<UpdateHandler>();
+// ReceiverService -> UpdateHandler
 builder.Services.AddScoped<ReceiverService>();
+builder.Services.AddScoped<UpdateHandler>();
+
 
 builder.Services.AddHostedService<PollingBackgroundService>();
 builder.Services.AddHostedService<PeriodicalCheckService>();
  
+
+
+
+
 var app = builder.Build();
 app.Run();

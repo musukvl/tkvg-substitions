@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\Unit
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TkvgSubstitution", "TkvgSubstitution\TkvgSubstitution.csproj", "{FA4EECB5-12EB-4E31-9475-18C3788447E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TkvgCli", "TkvgCli\TkvgCli.csproj", "{ABB40425-78EB-4514-AF23-5522E34F9382}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TkvgSubstitutionChats", "TkvgSubstitutionChats\TkvgSubstitutionChats.csproj", "{4D12C3BB-C03A-4F34-9D39-EDC99C288A3A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{FA4EECB5-12EB-4E31-9475-18C3788447E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA4EECB5-12EB-4E31-9475-18C3788447E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA4EECB5-12EB-4E31-9475-18C3788447E5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ABB40425-78EB-4514-AF23-5522E34F9382}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ABB40425-78EB-4514-AF23-5522E34F9382}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ABB40425-78EB-4514-AF23-5522E34F9382}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ABB40425-78EB-4514-AF23-5522E34F9382}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D12C3BB-C03A-4F34-9D39-EDC99C288A3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D12C3BB-C03A-4F34-9D39-EDC99C288A3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D12C3BB-C03A-4F34-9D39-EDC99C288A3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D12C3BB-C03A-4F34-9D39-EDC99C288A3A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

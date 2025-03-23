@@ -1,9 +1,12 @@
 Logging:
   LogLevel:
-    Default: Information
+    Default: Debug
     Microsoft.AspNetCore: Warning
 
 AllowedHosts: "*"
   
 BotConfiguration:
     BotToken: 123:xxxxx
+    
+SubstitutionCache:
+  CacheDuration: 1h
