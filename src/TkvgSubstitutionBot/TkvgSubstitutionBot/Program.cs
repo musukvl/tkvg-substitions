@@ -2,16 +2,22 @@
 using Telegram.Bot;
 using TkvgSubstitution;
 using TkvgSubstitution.Configuration;
-using TkvgSubstitutionBot;
 using TkvgSubstitutionBot.BackgroundServices;
 using TkvgSubstitutionBot.BotServices;
 using TkvgSubstitutionBot.Configuration;
 using TkvgSubstitutionBot.Subscription;
 using PeriodicalCheckService = TkvgSubstitutionBot.Subscription.PeriodicalCheckService;
 using UpdateHandler = TkvgSubstitutionBot.MessageHandler.UpdateHandler;
+using Serilog;
 
 // use web application just to have /health endpoint for running in container environment
 var builder = WebApplication.CreateBuilder(args);
+
+// Add Serilog configuration
+builder.Host.UseSerilog((context, services, configuration) => configuration
+    .ReadFrom.Configuration(context.Configuration)
+    .ReadFrom.Services(services)
+    .Enrich.FromLogContext());
 
 // yaml instead of json just because yaml is more human-readable
 builder.Configuration.AddYamlFile("appsettings.yml", optional: false, reloadOnChange: true);
@@ -80,4 +86,6 @@ builder.Services.AddSingleton<PeriodicalCheckService>();
 builder.Services.AddSingleton<NotificationService>();
 
 var app = builder.Build();
+
+
 app.Run();

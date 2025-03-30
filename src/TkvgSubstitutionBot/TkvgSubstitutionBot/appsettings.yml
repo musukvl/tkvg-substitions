@@ -13,3 +13,18 @@ BotConfiguration:
 SubstitutionCache:
   CacheDuration: 1h
   
+Serilog:
+  Using:
+    - Serilog.Sinks.File
+  MinimumLevel:
+    Default: Debug
+    Override:
+      Microsoft.AspNetCore: Warning
+  WriteTo:
+    - Name: File
+      Args:
+        path: logs/.log
+        rollingInterval: Day
+        retainedFileCountLimit: 30
+        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}"
+  
