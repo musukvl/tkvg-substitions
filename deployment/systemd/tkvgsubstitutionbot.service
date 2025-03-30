@@ -1,0 +1,21 @@
+﻿[Unit]
+Description=TkvgSubstitutionBot Telegram Bot Service
+After=network.target
+
+[Service]
+Type=simple
+User=musuk
+WorkingDirectory=/home/musuk/tkvg-bot/runtime
+ExecStart=/home/musuk/.dotnet/dotnet /home/musuk/tkvg-bot/runtime/TkvgSubstitutionBot.dll
+Restart=always
+# Restart service after 10 seconds if it crashes
+RestartSec=10
+# Environment variables if needed
+Environment=ASPNETCORE_ENVIRONMENT=Production
+
+# Configure logging
+StandardOutput=journal+file:/var/log/tkvg-bot/stdout.log
+StandardError=journal+file:/var/log/tkvg-bot/stderr.log
+
+[Install]
+WantedBy=multi-user.target

@@ -1,4 +1,6 @@
+using Microsoft.Extensions.Options;
 using Telegram.Bot;
+using TkvgSubstitutionBot.Configuration;
 using TkvgSubstitutionBot.Subscription;
 
 namespace TkvgSubstitutionBot.BackgroundServices;
@@ -6,18 +8,20 @@ namespace TkvgSubstitutionBot.BackgroundServices;
 public class PeriodicalCheckService : BackgroundService
 {
     private readonly ILogger<PeriodicalCheckService> _logger;
-    private readonly ITelegramBotClient _botClient;
-    private readonly ChatInfoFileStorage _chatInfoFileStorage;
+    private readonly IOptions<BotConfiguration> _botConfiguration;
+    private readonly Subscription.PeriodicalCheckService _periodicalCheckService;
 
-    public PeriodicalCheckService(ILogger<PeriodicalCheckService> logger, ITelegramBotClient botClient, ChatInfoFileStorage chatInfoFileStorage)
+    public PeriodicalCheckService(ILogger<PeriodicalCheckService> logger, IOptions<BotConfiguration> botConfiguration, Subscription.PeriodicalCheckService periodicalCheckService)
     {
+        
         _logger = logger;
-        _botClient = botClient;
-        _chatInfoFileStorage = chatInfoFileStorage;
+        _botConfiguration = botConfiguration;
+        _periodicalCheckService = periodicalCheckService;
     }
     
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        _logger.LogInformation("Starting PeriodicalCheckService every {PeriodicalCheckInterval}", _botConfiguration.Value.SubstitutionsCheckPeriod.ToString());
         while (!stoppingToken.IsCancellationRequested)
         {
             try
@@ -41,13 +45,8 @@ public class PeriodicalCheckService : BackgroundService
 
     private async Task DoPeriodicWork()
     {
-        var chats = _chatInfoFileStorage.GetChatIds();
-        foreach (var chatId in chats)
-        {
-            var chatInfo = await _chatInfoFileStorage.GetChatInfo(chatId);
-            if (chatInfo == null) continue;
-            
-            
-        }
+        _logger.LogInformation("Starting periodic check at: {time}", DateTimeOffset.UtcNow);
+        await _periodicalCheckService.DoCheck();
+        
     }
 }

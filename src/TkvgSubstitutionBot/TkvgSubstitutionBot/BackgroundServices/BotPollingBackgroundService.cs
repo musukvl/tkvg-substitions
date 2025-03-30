@@ -7,19 +7,31 @@ namespace TkvgSubstitutionBot.BackgroundServices;
 /// <summary>
 /// Background service that polls for updates
 /// </summary>
-/// <param name="serviceProvider"></param>
-/// <param name="logger"></param>
-public class PollingBackgroundService(IServiceProvider serviceProvider, ILogger<PollingBackgroundService> logger) : BackgroundService 
+public class BotPollingBackgroundService : BackgroundService 
 {
+    private readonly IServiceProvider _serviceProvider;
+    private readonly ILogger<BotPollingBackgroundService> _logger;
+
+    /// <summary>
+    /// Background service that polls for updates
+    /// </summary>
+    /// <param name="serviceProvider"></param>
+    /// <param name="logger"></param>
+    public BotPollingBackgroundService(IServiceProvider serviceProvider, ILogger<BotPollingBackgroundService> logger)
+    {
+        _serviceProvider = serviceProvider;
+        _logger = logger;
+    }
+
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        logger.LogInformation("Starting polling service");
+        _logger.LogInformation("Starting polling service");
         await DoWork(stoppingToken);
     }
 
     private async Task DoWork(CancellationToken stoppingToken)
     {
-        var bot = serviceProvider.GetRequiredService<ITelegramBotClient>();
+        var bot = _serviceProvider.GetRequiredService<ITelegramBotClient>();
         await bot.SetMyCommands(new[]
         {
             new BotCommand { Command = "next_day_substitutions", Description = "Next working day substitutions" },
@@ -35,16 +47,16 @@ public class PollingBackgroundService(IServiceProvider serviceProvider, ILogger<
         {
             try
             {
-                logger.LogInformation("Start receiving updates");
+                _logger.LogInformation("Start receiving updates");
                 // Create new IServiceScope on each iteration. This way we can leverage benefits
                 // of Scoped TReceiverService and typed HttpClient - we'll grab "fresh" instance each time
-                using var scope = serviceProvider.CreateScope();
-                var receiver = scope.ServiceProvider.GetRequiredService<ReceiverService>();
+                using var scope = _serviceProvider.CreateScope();
+                var receiver = scope.ServiceProvider.GetRequiredService<MessageReceiverService>();
                 await receiver.ReceiveAsync(stoppingToken);
             }
             catch (Exception ex)
             {
-                logger.LogError("Polling failed with exception: {Exception}", ex);
+                _logger.LogError("Polling failed with exception: {Exception}", ex);
                 // Cooldown if something goes wrong
                 await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
             }

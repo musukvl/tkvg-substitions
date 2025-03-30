@@ -43,6 +43,7 @@ public class ChatInfoFileStorage
         File.Delete(filePath);
     }
     
+    //TODO: use directory from config file
     private readonly string _storageDirectory = "chat-info";
     private string GetFilePath(long chatId)
     {

@@ -3,7 +3,7 @@ using Telegram.Bot.Polling;
 
 namespace TkvgSubstitutionBot.BotServices;
  
-public class ReceiverService(ITelegramBotClient botClient, MessageHandler.UpdateHandler updateHandler, ILogger<ReceiverService> logger)
+public class MessageReceiverService(ITelegramBotClient botClient, MessageHandler.UpdateHandler updateHandler, ILogger<MessageReceiverService> logger)
 {
     /// <summary>Start to service Updates with provided Update Handler class</summary>
     public async Task ReceiveAsync(CancellationToken stoppingToken)

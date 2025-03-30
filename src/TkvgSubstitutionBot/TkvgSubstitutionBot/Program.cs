@@ -5,7 +5,9 @@ using TkvgSubstitution.Configuration;
 using TkvgSubstitutionBot;
 using TkvgSubstitutionBot.BackgroundServices;
 using TkvgSubstitutionBot.BotServices;
+using TkvgSubstitutionBot.Configuration;
 using TkvgSubstitutionBot.Subscription;
+using PeriodicalCheckService = TkvgSubstitutionBot.Subscription.PeriodicalCheckService;
 using UpdateHandler = TkvgSubstitutionBot.MessageHandler.UpdateHandler;
 
 // use web application just to have /health endpoint for running in container environment
@@ -19,8 +21,28 @@ builder.Configuration.AddUserSecrets<Program>();
 
 builder.Services.AddHealthChecks();
 
-builder.Services.Configure<BotConfiguration>(builder.Configuration.GetSection("BotConfiguration"));
+// Configuration
+builder.Services.Configure<BotConfiguration>(options =>
+{
+    var rawConfig = builder.Configuration.GetSection("BotConfiguration").Get<RawBotConfiguration>();
+    if (rawConfig == null)
+    {
+        throw new ArgumentNullException("BotConfiguration section is missing in appsettings.yml");
+    }
+    var parsedConfig = rawConfig.Parse();
+    options.BotToken = parsedConfig.BotToken;
+    options.SubstitutionsCheckPeriod = parsedConfig.SubstitutionsCheckPeriod;
+    
+});
 
+builder.Services.Configure<SubstitutionCacheSettings>(options =>
+{    
+    var durationStr = builder.Configuration.GetValue<string>("SubstitutionCache:Duration");
+    if (!string.IsNullOrEmpty(durationStr))
+    {
+        options.CacheDuration = ConfigurationParseUtils.ParseTimeSpan(durationStr);
+    }
+});
 
 // Register named HttpClient to benefits from IHttpClientFactory and consume it with ITelegramBotClient typed client.
 // See https://docs.microsoft.com/en-us/aspnet/core/fundamentals/http-requests?view=aspnetcore-5.0#typed-clients
@@ -28,8 +50,7 @@ builder.Services.Configure<BotConfiguration>(builder.Configuration.GetSection("B
 builder.Services.AddHttpClient("telegram_bot_client").RemoveAllLoggers()
     .AddTypedClient<ITelegramBotClient>((httpClient, sp) =>
     {
-        BotConfiguration? botConfiguration = sp.GetService<IOptions<BotConfiguration>>()?.Value;
-        ArgumentNullException.ThrowIfNull(botConfiguration);
+        BotConfiguration botConfiguration = (sp.GetRequiredService<IOptions<BotConfiguration>>()).Value;
         TelegramBotClientOptions options = new(botConfiguration.BotToken);
         return new TelegramBotClient(options, httpClient);
     });
@@ -39,35 +60,24 @@ builder.Services.AddHttpClient<TkvgHttpClient>(client =>
     client.BaseAddress = new Uri("https://tkvg.edupage.org/");
 });
 
-builder.Services.Configure<SubstitutionCacheSettings>(options =>
-{    
-    var durationStr = builder.Configuration.GetValue<string>("SubstitutionCache:Duration");
-    if (!string.IsNullOrEmpty(durationStr))
-    {
-        options.CacheDuration = Utils.ParseTimeSpan(durationStr);
-    }
-});
-
- 
 // TkvgSubstitution
 builder.Services.AddMemoryCache(); 
 builder.Services.AddSingleton<TkvgSubstitutionReader>();
 builder.Services.AddSingleton<TkvgSubstitutionService>();
 
-
 // BotServices
 // ReceiverService -> UpdateHandler
-builder.Services.AddScoped<ReceiverService>();
+builder.Services.AddScoped<MessageReceiverService>();
 builder.Services.AddScoped<UpdateHandler>();
 builder.Services.AddSingleton<ChatInfoFileStorage>();
 builder.Services.AddSingleton<SubstitutionFrontendService>();
 
-builder.Services.AddHostedService<PollingBackgroundService>();
-builder.Services.AddHostedService<PeriodicalCheckService>();
- 
+builder.Services.AddHostedService<BotPollingBackgroundService>();
+builder.Services.AddHostedService<TkvgSubstitutionBot.BackgroundServices.PeriodicalCheckService>();
 
-
-
+// Notification Sevice
+builder.Services.AddSingleton<PeriodicalCheckService>();
+builder.Services.AddSingleton<NotificationService>();
 
 var app = builder.Build();
 app.Run();

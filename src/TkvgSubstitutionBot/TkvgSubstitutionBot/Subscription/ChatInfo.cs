@@ -6,4 +6,5 @@ public record ChatInfo
     public required string ClassName { get; set; }
     
     public string LastMessage { get; set; } = string.Empty;
+
 }

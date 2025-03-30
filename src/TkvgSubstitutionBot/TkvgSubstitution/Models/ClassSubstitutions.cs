@@ -1,7 +1,7 @@
 namespace TkvgSubstitution.Models;
 
-public class ClassSubstitutions
+public record ClassSubstitutions
 {
-    public string ClassName { get; set; }
-    public List<Substitution> Substitutions { get; set; }
+    public required string ClassName { get; init; }
+    public required List<Substitution> Substitutions { get; init; }
 } 

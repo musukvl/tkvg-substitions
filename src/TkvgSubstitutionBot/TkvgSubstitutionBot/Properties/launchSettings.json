@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Console.Advanced": {
+    "TkvgBot:Start": {
       "commandName": "Project",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"

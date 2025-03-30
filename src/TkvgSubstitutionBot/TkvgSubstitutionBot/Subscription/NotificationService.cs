@@ -1,16 +1,39 @@
-﻿namespace TkvgSubstitutionBot.Subscription;
+﻿using Microsoft.Extensions.Options;
+using Telegram.Bot;
+using TkvgSubstitution.Configuration;
+using TkvgSubstitution.Models;
+using TkvgSubstitutionBot.BotServices;
+using TkvgSubstitutionBot.Configuration;
 
-public class ChatServiceService
+namespace TkvgSubstitutionBot.Subscription;
+
+public class NotificationService
 {
-    private Dictionary<string, ChatInfo> Subscriptions { get; } = new();
-    
-    public void SetChatInfo(long chatId, string className)
+    private readonly ILogger<NotificationService> _logger;
+    private readonly ChatInfoFileStorage _chatInfoFileStorage;
+    private readonly ITelegramBotClient _botClient;
+    private readonly SubstitutionFrontendService _substitutionFrontend;
+
+    public NotificationService(ILogger<NotificationService> logger,
+        ChatInfoFileStorage chatInfoFileStorage, ITelegramBotClient botClient, SubstitutionFrontendService substitutionFrontend)
     {
-        
-        Subscriptions[className] = new ChatInfo
+        _logger = logger;
+        _chatInfoFileStorage = chatInfoFileStorage;
+        _botClient = botClient;
+        _substitutionFrontend = substitutionFrontend;
+    }
+    
+    public async Task Notify(ClassSubstitutions classSubstitutions)
+    {
+        var chatIds = _chatInfoFileStorage.GetChatIds();
+        foreach (var chatId in chatIds)
         {
-            ChatId = chatId,
-            ClassName = className
-        };
+            var chatInfo = await _chatInfoFileStorage.GetChatInfo(chatId);
+            if (chatInfo == null || chatInfo.ClassName != classSubstitutions.ClassName) continue;
+            
+            _logger.LogDebug("Send notification to {ChatId} about class {className}", chatId, classSubstitutions.ClassName);
+            var message = _substitutionFrontend.RenderNotification(classSubstitutions);
+            await _botClient.SendMessage(chatId, message);
+        }
     }
 }

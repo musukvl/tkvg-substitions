@@ -7,6 +7,9 @@ AllowedHosts: "*"
   
 BotConfiguration:
     BotToken: 123:xxxxx
+    SubstitutionsCheckPeriod: 1h
+    ChatInfoDirectory: ./chat-info
     
 SubstitutionCache:
   CacheDuration: 1h
+  

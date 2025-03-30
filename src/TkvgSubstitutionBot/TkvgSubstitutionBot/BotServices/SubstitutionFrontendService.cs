@@ -31,7 +31,18 @@ public class SubstitutionFrontendService
        
         return CreateSubstitutionMessage(substitutions, className);
     }
-    
+
+    public string RenderNotification(ClassSubstitutions classSubstitutions)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine($"# {classSubstitutions.ClassName}:");
+        foreach (var sub in classSubstitutions.Substitutions)
+        {
+            sb.AppendLine($"- {sub.Period} ({sub.Info})");
+        }
+        return sb.ToString();
+    }
+
     private string CreateSubstitutionMessage(List<ClassSubstitutions> substitutions, string? className)
     {
         var sb = new StringBuilder();
@@ -69,4 +80,6 @@ public class SubstitutionFrontendService
     {
         await _chatInfoFileStorage.DeleteChatInfo(chatId);
     }
+
+    
 }
