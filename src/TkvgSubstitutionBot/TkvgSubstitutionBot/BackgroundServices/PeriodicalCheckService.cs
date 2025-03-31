@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices.Marshalling;
 using Microsoft.Extensions.Options;
 using Telegram.Bot;
 using TkvgSubstitutionBot.Configuration;
@@ -22,6 +23,7 @@ public class PeriodicalCheckBackgroundService : BackgroundService
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _logger.LogInformation("Starting PeriodicalCheckService every {PeriodicalCheckInterval}", _botConfiguration.Value.SubstitutionsCheckPeriod.ToString());
+        _logger.BeginScope("PeriodicalCheckService");
         while (!stoppingToken.IsCancellationRequested)
         {
             try
@@ -38,7 +40,7 @@ public class PeriodicalCheckBackgroundService : BackgroundService
             {
                 _logger.LogError(ex, "Error occurred while executing periodic check");
                 // Wait for a shorter time if there was an error before retrying
-                await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+                await Task.Delay(TimeSpan.FromMinutes(10), stoppingToken);
             }
         }
     }
