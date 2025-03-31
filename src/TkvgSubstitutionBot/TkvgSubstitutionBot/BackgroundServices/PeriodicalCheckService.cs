@@ -5,13 +5,13 @@ using TkvgSubstitutionBot.Subscription;
 
 namespace TkvgSubstitutionBot.BackgroundServices;
 
-public class PeriodicalCheckService : BackgroundService
+public class PeriodicalCheckBackgroundService : BackgroundService
 {
-    private readonly ILogger<PeriodicalCheckService> _logger;
+    private readonly ILogger<PeriodicalCheckBackgroundService> _logger;
     private readonly IOptions<BotConfiguration> _botConfiguration;
     private readonly Subscription.PeriodicalCheckService _periodicalCheckService;
 
-    public PeriodicalCheckService(ILogger<PeriodicalCheckService> logger, IOptions<BotConfiguration> botConfiguration, Subscription.PeriodicalCheckService periodicalCheckService)
+    public PeriodicalCheckBackgroundService(ILogger<PeriodicalCheckBackgroundService> logger, IOptions<BotConfiguration> botConfiguration, Subscription.PeriodicalCheckService periodicalCheckService)
     {
         
         _logger = logger;
