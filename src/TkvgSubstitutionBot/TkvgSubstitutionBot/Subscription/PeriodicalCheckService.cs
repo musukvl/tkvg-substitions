@@ -35,6 +35,12 @@ public class PeriodicalCheckService
     
     public async Task DoCheck()
     {
+        // avoid sending notifications at night
+        if (DateTime.Now.Hour < 7 || DateTime.Now.Hour > 23)
+        {
+            _logger.LogDebug("Skipping check at night");
+            return;
+        }
         var nextWorkingDay = Utils.GetNextWorkingDay(DateTime.Now).ToString("yyyy-MM-dd");
         
         var nextDaySubstitutions = await _substitutionService.GetSubstitutions(nextWorkingDay);
