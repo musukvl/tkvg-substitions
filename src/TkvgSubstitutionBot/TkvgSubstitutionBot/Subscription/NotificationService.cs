@@ -33,6 +33,10 @@ public class NotificationService
             
             _logger.LogDebug("Send notification to {ChatId} about class {className}", chatId, classSubstitutions.ClassName);
             var message = _substitutionFrontend.RenderNotification(classSubstitutions);
+            if (chatInfo.LastMessage == message)
+                continue;
+            chatInfo.LastMessage = message;
+            await _chatInfoFileStorage.SetChatInfo(chatId, chatInfo);
             await _botClient.SendMessage(chatId, message);
         }
     }

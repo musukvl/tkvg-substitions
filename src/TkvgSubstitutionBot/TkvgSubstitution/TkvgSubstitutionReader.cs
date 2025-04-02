@@ -22,10 +22,10 @@ public class TkvgSubstitutionReader
         _logger.LogDebug("Substitutions received");
         var jsonNode = JsonNode.Parse(result);
         var content = jsonNode["r"]?.ToString();
-        return ParseSubstitutionsHtml(content);
+        return ParseSubstitutionsHtml(content, date);
     }
 
-    private List<ClassSubstitutions> ParseSubstitutionsHtml(string html)
+    private List<ClassSubstitutions> ParseSubstitutionsHtml(string html, string date)
     {
         var doc = new HtmlDocument();
         doc.LoadHtml(html);
@@ -77,7 +77,8 @@ public class TkvgSubstitutionReader
             classSubstitutions.Add(new ClassSubstitutions
             {
                 ClassName = className,
-                Substitutions = substitutions
+                Substitutions = substitutions,
+                Date = date
             });
         }
 
