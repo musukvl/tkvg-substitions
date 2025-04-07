@@ -36,7 +36,7 @@ public class PeriodicalCheckService
     public async Task DoCheck()
     {
         // avoid sending notifications at night
-        if (DateTime.Now.Hour < 7 || DateTime.Now.Hour > 23)
+        if (DateTime.Now.Hour < 16 || DateTime.Now.Hour > 23)
         {
             _logger.LogDebug("Skipping check at night");
             return;
