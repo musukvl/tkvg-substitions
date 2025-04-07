@@ -58,7 +58,7 @@ public partial class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler
     private async Task<Message> Usage(Message msg)
     {
         const string usage = """
-                <b><u>Bot menu</u></b>:
+                <b><u>Меню бота</u></b>:
                 /next_day_substitutions
                 /today_substitutions
             """;

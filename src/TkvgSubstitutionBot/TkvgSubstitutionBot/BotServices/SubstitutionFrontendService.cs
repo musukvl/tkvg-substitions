@@ -35,7 +35,7 @@ public class SubstitutionFrontendService
     public string RenderNotification(ClassSubstitutions classSubstitutions)
     {
         var sb = new StringBuilder();
-        sb.AppendLine($"Substitutions for {classSubstitutions.ClassName} at {classSubstitutions.Date}:");
+        sb.AppendLine($"Замены {classSubstitutions.ClassName} {classSubstitutions.Date}:");
         foreach (var sub in classSubstitutions.Substitutions)
         {
             sb.AppendLine($"- {sub.Period} ({sub.Info})");
