@@ -62,6 +62,9 @@ public partial class UpdateHandler
             _ => ""
         };
         await bot.AnswerCallbackQuery(callbackQuery.Id, "Processing...");
+        
         await bot.SendMessage(callbackQuery.Message!.Chat, messageResult, parseMode: ParseMode.None);
     }
+    
+    
 }

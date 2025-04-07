@@ -52,7 +52,7 @@ public partial class UpdateHandler(ITelegramBotClient bot, ILogger<UpdateHandler
     private async Task<Message> Unsubscribe(Message msg)
     {
         await frontend.RemoveSubscription(msg.Chat.Id);
-        return await bot.SendMessage(msg.Chat, "Unsubscribed", parseMode: ParseMode.None);
+        return await bot.SendMessage(msg.Chat, "Подписка отменена.", parseMode: ParseMode.None);
     }
     
     private async Task<Message> Usage(Message msg)
