@@ -68,7 +68,7 @@ public class SubstitutionFrontendService
         var result = sb.ToString();
         if (!substitutionsFound)
             return $"Нет замен на {date} для {className}.";
-        result = $"Замены на {date}:\n{result}";
+        result = $"{date}:\r\n{result}";
         return result;
     }
 
