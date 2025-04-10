@@ -34,10 +34,10 @@ public class BotPollingBackgroundService : BackgroundService
         var bot = _serviceProvider.GetRequiredService<ITelegramBotClient>();
         await bot.SetMyCommands(new[]
         {
-            new BotCommand { Command = "next_day_substitutions", Description = "Next working day substitutions" },
-            new BotCommand { Command = "today_substitutions", Description = "Today substitutions" },
-            new BotCommand { Command = "subscribe", Description = "Subscribe notifications" },
-            new BotCommand { Command = "unsubscribe", Description = "Unsubscribe notifications" },
+            new BotCommand { Command = "next_day_substitutions", Description = "Замены на следующий учебный день" },
+            new BotCommand { Command = "today_substitutions", Description = "Замены на сегодня" },
+            new BotCommand { Command = "subscribe", Description = "Подписаться на уведомления о заменах" },
+            new BotCommand { Command = "unsubscribe", Description = "Отписаться от уведомлений" },
             
         });
         
