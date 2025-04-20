@@ -7,6 +7,7 @@ public class RawBotConfiguration
 {
     public required string BotToken { get; init; }
     public required string SubstitutionsCheckPeriod { get; init; }
+    public required string ChatInfoDirectory { get; init; }
 
     /// <summary>
     /// Validates and parses the raw configuration into a strongly-typed BotConfiguration
@@ -24,7 +25,7 @@ public class RawBotConfiguration
         {
             BotToken = BotToken,
             SubstitutionsCheckPeriod = checkPeriod,
-            ChatInfoDirectory = Path.Combine(AppContext.BaseDirectory, "chat-info")
+            ChatInfoDirectory = ChatInfoDirectory
         };
     }
 }

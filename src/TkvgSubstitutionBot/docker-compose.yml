@@ -2,16 +2,16 @@ version: '3.7'
 
 services:
   tkvgbot:
-    build:
-      context: .
-      dockerfile: ./TkvgSubstitutionBot/Dockerfile
-    ports:
-      - "5001:5001"
+    image: musukvl/tkvg-substitution-bot:1.0.3
+    container_name: tkvgbot
+    restart: always
     environment:
-      - ASPNETCORE_URLS=http://+:5001      
-    restart: unless-stopped
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
+      ASPNETCORE_URLS: http://0.0.0.0:8080
+      BotConfiguration__BotToken: ${TG_BOT_TOKEN}
+      BotConfiguration__ChatInfoDirectory: /chat-info
+    volumes:
+      - chat-info-data:/chat-info
+
+volumes:
+  chat-info-data:
+    driver: local

@@ -35,7 +35,7 @@ public class SubstitutionFrontendService
     public string RenderNotification(ClassSubstitutions classSubstitutions)
     {
         var sb = new StringBuilder();
-        sb.AppendLine($"Substitutions for {classSubstitutions.ClassName} at {classSubstitutions.Date}:");
+        sb.AppendLine($"Замены для {classSubstitutions.ClassName} на {classSubstitutions.Date}:");
         foreach (var sub in classSubstitutions.Substitutions)
         {
             sb.AppendLine($"- {sub.Period} ({sub.Info})");
@@ -62,7 +62,7 @@ public class SubstitutionFrontendService
         }
         var result = sb.ToString();
         if (string.IsNullOrEmpty(result))
-            return "No substitutions.";
+            return "Нет замен.";
         return result;
     }
 
@@ -73,13 +73,12 @@ public class SubstitutionFrontendService
             ChatId = chatId,
             ClassName = className
         });
-        return "Subscription added.";
+        return $"Вы подписаны на уведомление о заменах для {className}.";
     }
 
     public async Task RemoveSubscription(long chatId)
     {
         await _chatInfoFileStorage.DeleteChatInfo(chatId);
     }
-
     
 }

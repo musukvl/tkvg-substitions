@@ -37,7 +37,8 @@ builder.Services.Configure<BotConfiguration>(options =>
     var parsedConfig = rawConfig.Parse();
     options.BotToken = parsedConfig.BotToken;
     options.SubstitutionsCheckPeriod = parsedConfig.SubstitutionsCheckPeriod;
-    
+    options.ChatInfoDirectory = parsedConfig.ChatInfoDirectory;
+
 });
 
 builder.Services.Configure<SubstitutionCacheSettings>(options =>
@@ -70,6 +71,7 @@ builder.Services.AddMemoryCache();
 builder.Services.AddTransient<TkvgSubstitutionReader>();
 builder.Services.AddTransient<TkvgSubstitutionService>();
 
+
 // BotServices
 // ReceiverService -> UpdateHandler
 builder.Services.AddScoped<MessageReceiverService>();
@@ -85,6 +87,6 @@ builder.Services.AddTransient<PeriodicalCheckService>();
 builder.Services.AddTransient<NotificationService>();
 
 var app = builder.Build();
-
+app.MapHealthChecks("/health");
 
 app.Run();

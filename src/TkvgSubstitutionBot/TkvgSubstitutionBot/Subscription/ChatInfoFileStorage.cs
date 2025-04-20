@@ -1,4 +1,6 @@
-﻿using YamlDotNet.Serialization;
+﻿using Microsoft.Extensions.Options;
+using TkvgSubstitutionBot.Configuration;
+using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
 namespace TkvgSubstitutionBot.Subscription;
@@ -6,6 +8,14 @@ namespace TkvgSubstitutionBot.Subscription;
 
 public class ChatInfoFileStorage 
 {
+    private readonly string _storageDirectory;
+
+    public ChatInfoFileStorage(IOptions<BotConfiguration> botConfiguration)
+    {
+        var botConfiguration1 = botConfiguration.Value;
+        _storageDirectory = Path.Combine(botConfiguration1.ChatInfoDirectory, "subscriptions");
+    }
+    
     private readonly ISerializer _serializer = new SerializerBuilder()
         .WithNamingConvention(CamelCaseNamingConvention.Instance)
         .Build();
@@ -13,6 +23,8 @@ public class ChatInfoFileStorage
     private readonly IDeserializer _deserializer = new DeserializerBuilder()
         .WithNamingConvention(CamelCaseNamingConvention.Instance)
         .Build();
+
+    
 
     public async Task<ChatInfo?> GetChatInfo(long chatId)
     {
@@ -43,8 +55,6 @@ public class ChatInfoFileStorage
         File.Delete(filePath);
     }
     
-    //TODO: use directory from config file
-    private readonly string _storageDirectory = "chat-info";
     private string GetFilePath(long chatId)
     {
         EnsureChatInfoDirectory();
