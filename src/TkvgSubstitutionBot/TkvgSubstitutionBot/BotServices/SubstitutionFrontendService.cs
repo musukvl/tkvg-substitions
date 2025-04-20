@@ -21,7 +21,7 @@ public class SubstitutionFrontendService
         var date = DateTime.Now.AddDays(1).ToString("yyyy-MM-dd");
         var substitutions = await _substitutionService.GetSubstitutions(date);
        
-        return CreateSubstitutionMessage(substitutions, className);
+        return CreateSubstitutionMessage(substitutions, className, date);
     }
     
     public async Task<string> GetTodaySubstitutions(string? className)
@@ -29,13 +29,13 @@ public class SubstitutionFrontendService
         var date = DateTime.Now.ToString("yyyy-MM-dd");
         var substitutions = await _substitutionService.GetSubstitutions(date);
        
-        return CreateSubstitutionMessage(substitutions, className);
+        return CreateSubstitutionMessage(substitutions, className, date);
     }
 
     public string RenderNotification(ClassSubstitutions classSubstitutions)
     {
         var sb = new StringBuilder();
-        sb.AppendLine($"Замены для {classSubstitutions.ClassName} на {classSubstitutions.Date}:");
+        sb.AppendLine($"Замены {classSubstitutions.ClassName} {classSubstitutions.Date}:");
         foreach (var sub in classSubstitutions.Substitutions)
         {
             sb.AppendLine($"- {sub.Period} ({sub.Info})");
@@ -43,13 +43,16 @@ public class SubstitutionFrontendService
         return sb.ToString();
     }
 
-    private string CreateSubstitutionMessage(List<ClassSubstitutions> substitutions, string? className)
+    private string CreateSubstitutionMessage(List<ClassSubstitutions> substitutions, string? className, string date)
     {
         var sb = new StringBuilder();
+        
+        var substitutionsFound = false;
         foreach (var substitution in substitutions)
         {
             if (className != null && !string.Equals(substitution.ClassName, className, StringComparison.CurrentCultureIgnoreCase))
                 continue;
+            substitutionsFound = true;
             if (className == null)
             {
                 sb.AppendLine($"# {substitution.ClassName}:");
@@ -61,8 +64,9 @@ public class SubstitutionFrontendService
             }
         }
         var result = sb.ToString();
-        if (string.IsNullOrEmpty(result))
-            return "Нет замен.";
+        if (!substitutionsFound)
+            return $"Нет замен на {date} для {className}.";
+        result = $"{date}:\r\n{result}";
         return result;
     }
 
@@ -73,12 +77,11 @@ public class SubstitutionFrontendService
             ChatId = chatId,
             ClassName = className
         });
-        return $"Вы подписаны на уведомление о заменах для {className}.";
+        return $"Добавлена подписка на замены для {className}. Теперь вы будете получать уведомления о заменах уроков на следующий учебный день.";
     }
 
     public async Task RemoveSubscription(long chatId)
     {
         await _chatInfoFileStorage.DeleteChatInfo(chatId);
     }
-    
 }

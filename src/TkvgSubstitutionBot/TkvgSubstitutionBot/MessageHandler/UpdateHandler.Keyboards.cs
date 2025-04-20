@@ -15,9 +15,9 @@ public partial class UpdateHandler
                 .AddButton("3B", "next_day_substitutions:3b")
                 .AddButton("6D", "next_day_substitutions:6d")
                 .AddNewRow()
-                .AddButton("All", "next_day_substitutions:all")
+                .AddButton("Все", "next_day_substitutions:all")
             ;
-        return await bot.SendMessage(msg.Chat, "Next Day Substitutions. Pick Class:", replyMarkup: inlineMarkup);
+        return await bot.SendMessage(msg.Chat, "Замены на следующий день. Выберите класс:", replyMarkup: inlineMarkup);
     }
     
     private async Task<Message> CurrentDaySubstitutionKeyboard(Message msg)
@@ -28,9 +28,9 @@ public partial class UpdateHandler
                 .AddButton("3B", "today_substitutions:3b")
                 .AddButton("6D", "today_substitutions:6d")
                 .AddNewRow()
-                .AddButton("All", "today_substitutions:all")
+                .AddButton("Все", "today_substitutions:all")
             ;
-        return await bot.SendMessage(msg.Chat, "Today Substitutions. Pick Class:", replyMarkup: inlineMarkup);
+        return await bot.SendMessage(msg.Chat, "Замены на сегодня. Выберите класс:", replyMarkup: inlineMarkup);
     }
     
     private async Task<Message> SubscriptionKeyboard(Message msg)
@@ -41,9 +41,9 @@ public partial class UpdateHandler
                 .AddButton("3B", "add_subscription:3b")
                 .AddButton("6D", "add_subscription:6d")
                 .AddNewRow()
-                .AddButton("All", "add_subscription:all")
+                .AddButton("Все", "add_subscription:all")
             ;
-        return await bot.SendMessage(msg.Chat, "Pick Class:", replyMarkup: inlineMarkup);
+        return await bot.SendMessage(msg.Chat, "Выберите класс:", replyMarkup: inlineMarkup);
     }
     
     // Process Inline Keyboard callback data
@@ -62,6 +62,9 @@ public partial class UpdateHandler
             _ => ""
         };
         await bot.AnswerCallbackQuery(callbackQuery.Id, "Processing...");
+        
         await bot.SendMessage(callbackQuery.Message!.Chat, messageResult, parseMode: ParseMode.None);
     }
+    
+    
 }
