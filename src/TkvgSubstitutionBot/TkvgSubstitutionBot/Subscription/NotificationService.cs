@@ -29,8 +29,16 @@ public class NotificationService
         foreach (var chatId in chatIds)
         {
             var chatInfo = await _chatInfoFileStorage.GetChatInfo(chatId);
-            if (chatInfo == null || chatInfo.ClassName != classSubstitutions.ClassName) continue;
-            
+            if (chatInfo == null)
+            {
+                continue;
+            }
+
+            if (chatInfo.ClassName != classSubstitutions.ClassName && chatInfo.ClassName + "_ring" != classSubstitutions.ClassName)
+            {
+                continue;
+            }
+
             _logger.LogDebug("Send notification to {ChatId} about class {className}", chatId, classSubstitutions.ClassName);
             var message = _substitutionFrontend.RenderNotification(classSubstitutions);
             if (chatInfo.LastMessage == message)
