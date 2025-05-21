@@ -2,13 +2,13 @@
 
 namespace UnitTests;
 
-    public class TkvgTestClient
+public class TkvgTestClient
+{
+    [Fact]
+    public async Task TestGetSubstitution()
     {
-        [Fact]
-        public async Task Test1()
-        {
-            var client = new TkvgHttpClient(new HttpClient() { BaseAddress = new Uri("https://tkvg.edupage.org/") });
-            var result = await client.GetSubstitutionsHtml("2025-02-17");
-            Assert.NotEmpty(result);
-        }
+        var client = new TkvgHttpClient(new HttpClient() { BaseAddress = new Uri("https://tkvg.edupage.org/") });
+        var result = await client.GetSubstitutionsHtml("2025-05-22");
+        Assert.NotEmpty(result);
     }
+}

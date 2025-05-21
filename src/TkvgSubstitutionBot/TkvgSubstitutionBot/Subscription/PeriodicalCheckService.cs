@@ -46,13 +46,13 @@ public class PeriodicalCheckService
         var nextDaySubstitutions = await _substitutionService.GetSubstitutions(nextWorkingDay);
         
         var previousSubstitutions = GetPreviousCheck();
-        foreach (var ndSubstition in nextDaySubstitutions)
+        foreach (var nextDaySubstitution in nextDaySubstitutions)
         {
-            var previousSubstitution = previousSubstitutions.FirstOrDefault(x => x.Key == ndSubstition.ClassName);
-            if (previousSubstitution.Value == null || previousSubstitution.Value != ndSubstition)
+            var previousSubstitution = previousSubstitutions.FirstOrDefault(x => x.Key == nextDaySubstitution.ClassName);
+            if (previousSubstitution.Value == null || previousSubstitution.Value != nextDaySubstitution)
             {
-                _logger.LogInformation("Substitution changed for class {ClassName}", ndSubstition.ClassName);
-                await _notificationService.Notify(ndSubstition);
+                _logger.LogInformation("Substitution changed for class {ClassName}", nextDaySubstitution.ClassName);
+                await _notificationService.Notify(nextDaySubstitution);
             }
         }
         

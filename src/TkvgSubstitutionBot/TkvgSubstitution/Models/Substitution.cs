@@ -1,6 +1,6 @@
 namespace TkvgSubstitution.Models;
 
-public class Substitution
+public record Substitution
 {
     public string Period { get; set; }
     public string Info { get; set; }

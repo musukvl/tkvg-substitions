@@ -77,7 +77,7 @@ public class TkvgSubstitutionReader
             classSubstitutions.Add(new ClassSubstitutions
             {
                 ClassName = className,
-                Substitutions = substitutions,
+                Substitutions = substitutions.Distinct().ToList(),
                 Date = date
             });
         }

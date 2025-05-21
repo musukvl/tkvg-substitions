@@ -49,6 +49,5 @@ public class PeriodicalCheckBackgroundService : BackgroundService
     {
         _logger.LogInformation("Starting periodic check at: {time}", DateTimeOffset.UtcNow);
         await _periodicalCheckService.DoCheck();
-        
     }
 }
