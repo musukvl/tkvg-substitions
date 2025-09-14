@@ -11,9 +11,8 @@ public partial class UpdateHandler
     {
         var inlineMarkup = new InlineKeyboardMarkup()
                 .AddNewRow()
-                .AddButton("2A", "next_day_substitutions:2a")
-                .AddButton("3B", "next_day_substitutions:3b")
-                .AddButton("6D", "next_day_substitutions:6d")
+                .AddButton("3A", "next_day_substitutions:3.a")
+                .AddButton("4B", "next_day_substitutions:4.b")
                 .AddNewRow()
                 .AddButton("Все", "next_day_substitutions:all")
             ;
@@ -24,9 +23,8 @@ public partial class UpdateHandler
     {
         var inlineMarkup = new InlineKeyboardMarkup()
                 .AddNewRow()
-                .AddButton("2A", "today_substitutions:2a")
-                .AddButton("3B", "today_substitutions:3b")
-                .AddButton("6D", "today_substitutions:6d")
+                .AddButton("3A", "today_substitutions:3.a")
+                .AddButton("4B", "today_substitutions:4.b")
                 .AddNewRow()
                 .AddButton("Все", "today_substitutions:all")
             ;
@@ -37,9 +35,8 @@ public partial class UpdateHandler
     {
         var inlineMarkup = new InlineKeyboardMarkup()
                 .AddNewRow()
-                .AddButton("2A", "add_subscription:2a")
-                .AddButton("3B", "add_subscription:3b")
-                .AddButton("6D", "add_subscription:6d")
+                .AddButton("3A", "add_subscription:3.a")
+                .AddButton("4B", "add_subscription:4.b")
                 .AddNewRow()
                 .AddButton("Все", "add_subscription:all")
             ;
