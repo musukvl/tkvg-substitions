@@ -2,6 +2,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using TkvgSubstitutionBot.BotControls;
 
 namespace TkvgSubstitutionBot.MessageHandler;
 
@@ -9,40 +10,19 @@ public partial class UpdateHandler
 {
     private async Task<Message> NextDaySubstitutionKeyboard(Message msg)
     {
-        var inlineMarkup = new InlineKeyboardMarkup()
-                .AddNewRow()
-                .AddButton("2A", "next_day_substitutions:2a")
-                .AddButton("3B", "next_day_substitutions:3b")
-                .AddButton("6D", "next_day_substitutions:6d")
-                .AddNewRow()
-                .AddButton("Все", "next_day_substitutions:all")
-            ;
+        var inlineMarkup = ClassPickerKeyboardMarkup.GetClassPickerKeyboard("next_day_substitutions");
         return await bot.SendMessage(msg.Chat, "Замены на следующий день. Выберите класс:", replyMarkup: inlineMarkup);
     }
     
     private async Task<Message> CurrentDaySubstitutionKeyboard(Message msg)
     {
-        var inlineMarkup = new InlineKeyboardMarkup()
-                .AddNewRow()
-                .AddButton("2A", "today_substitutions:2a")
-                .AddButton("3B", "today_substitutions:3b")
-                .AddButton("6D", "today_substitutions:6d")
-                .AddNewRow()
-                .AddButton("Все", "today_substitutions:all")
-            ;
+        var inlineMarkup = ClassPickerKeyboardMarkup.GetClassPickerKeyboard("today_substitutions");
         return await bot.SendMessage(msg.Chat, "Замены на сегодня. Выберите класс:", replyMarkup: inlineMarkup);
     }
     
     private async Task<Message> SubscriptionKeyboard(Message msg)
     {
-        var inlineMarkup = new InlineKeyboardMarkup()
-                .AddNewRow()
-                .AddButton("2A", "add_subscription:2a")
-                .AddButton("3B", "add_subscription:3b")
-                .AddButton("6D", "add_subscription:6d")
-                .AddNewRow()
-                .AddButton("Все", "add_subscription:all")
-            ;
+        var inlineMarkup = ClassPickerKeyboardMarkup.GetClassPickerKeyboard("add_subscription");
         return await bot.SendMessage(msg.Chat, "Выберите класс:", replyMarkup: inlineMarkup);
     }
     
