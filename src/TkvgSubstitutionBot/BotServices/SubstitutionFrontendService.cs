@@ -18,7 +18,7 @@ public class SubstitutionFrontendService
     
     public async Task<string> GetNextDaySubstitutions(string? className)
     {
-        var date = DateTime.Now.AddDays(1).ToString("yyyy-MM-dd");
+        var date = TkvgSubstitution.Utils.GetNextWorkingDay(DateTime.Now).ToString("yyyy-MM-dd");
         var substitutions = await _substitutionService.GetSubstitutions(date);
        
         return CreateSubstitutionMessage(substitutions, className, date);

@@ -27,12 +27,21 @@ public partial class UpdateHandler
     }
     
     // Process Inline Keyboard callback data
-    private async Task OnCallbackQuery(CallbackQuery callbackQuery)
+    public async Task HandleCallbackQuery(CallbackQuery callbackQuery)
     {
         logger.LogInformation("Received inline keyboard callback from: {CallbackQueryId}", callbackQuery.Id);
-        var operation = callbackQuery.Data?.Split(":")[0];
-        var className = callbackQuery.Data?.Split(":")[1];
-        className = className == "all" ? null : className;
+
+        if (string.IsNullOrEmpty(callbackQuery.Data) || !callbackQuery.Data.Contains(':'))
+        {
+            await bot.AnswerCallbackQuery(callbackQuery.Id, "Invalid callback data");
+            return;
+        }
+
+        await bot.AnswerCallbackQuery(callbackQuery.Id, "Processing...");
+
+        var parts = callbackQuery.Data.Split(':');
+        var operation = parts[0];
+        var className = parts.Length > 1 && parts[1] != "all" ? parts[1] : null;
 
         string messageResult = operation switch
         {
@@ -41,8 +50,7 @@ public partial class UpdateHandler
             "add_subscription" => await frontend.AddSubscription(callbackQuery.From.Id, className),
             _ => ""
         };
-        await bot.AnswerCallbackQuery(callbackQuery.Id, "Processing...");
-        
+
         await bot.SendMessage(callbackQuery.Message!.Chat, messageResult, parseMode: ParseMode.None);
     }
     

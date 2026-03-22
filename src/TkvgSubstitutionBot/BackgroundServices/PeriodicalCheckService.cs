@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices.Marshalling;
 using Microsoft.Extensions.Options;
 using Telegram.Bot;
 using TkvgSubstitutionBot.Configuration;
@@ -33,8 +32,7 @@ public class PeriodicalCheckBackgroundService : BackgroundService
                 // Place your hourly action here
                 await DoPeriodicWork();
                 
-                // Wait for 1 hour before the next execution
-                await Task.Delay(TimeSpan.FromHours(1), stoppingToken);
+                await Task.Delay(_botConfiguration.Value.SubstitutionsCheckPeriod, stoppingToken);
             }
             catch (Exception ex)
             {

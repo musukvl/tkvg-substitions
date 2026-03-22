@@ -5,9 +5,9 @@ using TkvgSubstitution.Configuration;
 using TkvgSubstitutionBot.BackgroundServices;
 using TkvgSubstitutionBot.BotServices;
 using TkvgSubstitutionBot.Configuration;
+using TkvgSubstitutionBot.MessageHandler;
 using TkvgSubstitutionBot.Subscription;
 using Serilog;
-using TkvgSubstitutionBot.MessageHandler;
 
 // use web application just to have /health endpoint for running in container environment
 var builder = WebApplication.CreateBuilder(args);
@@ -73,13 +73,11 @@ builder.Services.AddTransient<TkvgSubstitutionService>();
 
 
 // BotServices
-// ReceiverService -> UpdateHandler
-builder.Services.AddScoped<MessageReceiverService>();
 builder.Services.AddScoped<UpdateHandler>();
 builder.Services.AddSingleton<ChatInfoFileStorage>();
 builder.Services.AddTransient<SubstitutionFrontendService>();
 
-builder.Services.AddHostedService<BotPollingBackgroundService>();
+builder.Services.AddHostedService<BotBackgroundService>();
 builder.Services.AddHostedService<TkvgSubstitutionBot.BackgroundServices.PeriodicalCheckBackgroundService>();
 
 // Notification Sevice

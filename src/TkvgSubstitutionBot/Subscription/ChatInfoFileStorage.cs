@@ -69,7 +69,7 @@ public class ChatInfoFileStorage
         }
     }
 
-    public List<int> GetChatIds()
+    public List<long> GetChatIds()
     {
         EnsureChatInfoDirectory();
         var files = Directory.GetFiles(_storageDirectory);
@@ -78,6 +78,6 @@ public class ChatInfoFileStorage
             .Select(Path.GetFileNameWithoutExtension)
             .Where(x => !string.IsNullOrWhiteSpace(x))
             .ToList();
-        return fileNames.Select(int.Parse).ToList();
+        return fileNames.Select(long.Parse).ToList();
     }
 }
