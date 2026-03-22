@@ -1,10 +1,12 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Telegram.Bot;
 using TkvgSubstitution;
 using TkvgSubstitution.Configuration;
 using TkvgSubstitutionBot.BackgroundServices;
 using TkvgSubstitutionBot.BotServices;
 using TkvgSubstitutionBot.Configuration;
+using TkvgSubstitutionBot.Data;
 using TkvgSubstitutionBot.MessageHandler;
 using TkvgSubstitutionBot.Subscription;
 using Serilog;
@@ -37,8 +39,6 @@ builder.Services.Configure<BotConfiguration>(options =>
     var parsedConfig = rawConfig.Parse();
     options.BotToken = parsedConfig.BotToken;
     options.SubstitutionsCheckPeriod = parsedConfig.SubstitutionsCheckPeriod;
-    options.ChatInfoDirectory = parsedConfig.ChatInfoDirectory;
-
 });
 
 builder.Services.Configure<SubstitutionCacheSettings>(options =>
@@ -72,19 +72,31 @@ builder.Services.AddTransient<TkvgSubstitutionReader>();
 builder.Services.AddTransient<TkvgSubstitutionService>();
 
 
+// Database
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<ISubscriptionStorage, PostgresSubscriptionStorage>();
+
 // BotServices
 builder.Services.AddScoped<UpdateHandler>();
-builder.Services.AddSingleton<ChatInfoFileStorage>();
-builder.Services.AddTransient<SubstitutionFrontendService>();
+builder.Services.AddScoped<SubstitutionFrontendService>();
 
 builder.Services.AddHostedService<BotBackgroundService>();
 builder.Services.AddHostedService<TkvgSubstitutionBot.BackgroundServices.PeriodicalCheckBackgroundService>();
 
-// Notification Sevice
-builder.Services.AddTransient<PeriodicalCheckService>();
-builder.Services.AddTransient<NotificationService>();
+// Notification Service
+builder.Services.AddScoped<PeriodicalCheckService>();
+builder.Services.AddScoped<NotificationService>();
 
 var app = builder.Build();
 app.MapHealthChecks("/health");
+
+// Run SQL migrations
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var migrationsPath = Path.Combine(AppContext.BaseDirectory, "migrations");
+    await DbMigrator.MigrateAsync(db, migrationsPath);
+}
 
 app.Run();

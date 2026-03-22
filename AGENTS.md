@@ -55,7 +55,7 @@ The CLI skips `TkvgSubstitutionService` and uses `TkvgSubstitutionReader` direct
 ## Deployment
 
 - **Docker**: Multi-stage build in `src/TkvgSubstitutionBot/Dockerfile`, image `musukvl/tkvg-substitution-bot`
-- **Docker Compose**: `src/docker-compose.yml`, port 8080, volume for subscription data
-- **Systemd**: `deployment/systemd/tkvgsubstitutionbot.service`
+- **Docker Compose**: `src/docker-compose.yml`, port 8080, volume for subscription data. Use `docker compose` as much as possible.
+- **.env**: The `.env` file is the source for secrets. Must not being commited or exposed to public. Should be added to app environment.
 - **Health check**: `/health` endpoint
 - **No CI/CD**: Manual builds via `src/build.sh`

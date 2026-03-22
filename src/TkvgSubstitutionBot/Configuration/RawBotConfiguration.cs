@@ -7,7 +7,6 @@ public class RawBotConfiguration
 {
     public required string BotToken { get; init; }
     public required string SubstitutionsCheckPeriod { get; init; }
-    public required string ChatInfoDirectory { get; init; }
 
     /// <summary>
     /// Validates and parses the raw configuration into a strongly-typed BotConfiguration
@@ -24,8 +23,7 @@ public class RawBotConfiguration
         return new BotConfiguration
         {
             BotToken = BotToken,
-            SubstitutionsCheckPeriod = checkPeriod,
-            ChatInfoDirectory = ChatInfoDirectory
+            SubstitutionsCheckPeriod = checkPeriod
         };
     }
 }

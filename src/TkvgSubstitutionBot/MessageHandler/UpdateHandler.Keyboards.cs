@@ -41,13 +41,15 @@ public partial class UpdateHandler
 
         var parts = callbackQuery.Data.Split(':');
         var operation = parts[0];
-        var className = parts.Length > 1 && parts[1] != "all" ? parts[1] : null;
+        var rawClassName = parts.Length > 1 ? parts[1] : "all";
+        // For query commands, "all" means no filter (null). For subscriptions, keep "all" as literal.
+        var queryClassName = rawClassName == "all" ? null : rawClassName;
 
         string messageResult = operation switch
         {
-            "today_substitutions" => await frontend.GetTodaySubstitutions(className),
-            "next_day_substitutions" => await frontend.GetNextDaySubstitutions(className),
-            "add_subscription" => await frontend.AddSubscription(callbackQuery.From.Id, className),
+            "today_substitutions" => await frontend.GetTodaySubstitutions(queryClassName),
+            "next_day_substitutions" => await frontend.GetNextDaySubstitutions(queryClassName),
+            "add_subscription" => await frontend.AddSubscription(callbackQuery.From.Id, rawClassName),
             _ => ""
         };
 

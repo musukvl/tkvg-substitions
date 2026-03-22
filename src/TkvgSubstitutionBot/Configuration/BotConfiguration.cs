@@ -7,5 +7,4 @@ public class BotConfiguration
 {
     public required string BotToken { get; set; }
     public required TimeSpan SubstitutionsCheckPeriod { get; set; }
-    public required string ChatInfoDirectory { get; set; }
 }

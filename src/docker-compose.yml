@@ -1,22 +1,36 @@
-version: '3.7'
-
 services:
+  postgres:
+    image: postgres:18
+    container_name: tkvgbot-db
+    restart: always
+    environment:
+      POSTGRES_DB: tkvgbot
+      POSTGRES_USER: tkvgbot
+      POSTGRES_PASSWORD: ${TKVG_DB_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tkvgbot -d tkvgbot"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   tkvgbot:
     build:
       context: .
       dockerfile: TkvgSubstitutionBot/Dockerfile
-
     container_name: tkvgbot
     restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
     env_file:
       - .env
     environment:
       ASPNETCORE_URLS: http://0.0.0.0:8080
       BotConfiguration__BotToken: ${TKVG_BOT_TOKEN}
-      BotConfiguration__ChatInfoDirectory: /chat-info
-    volumes:
-      - chat-info-data:/chat-info
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=tkvgbot;Username=tkvgbot;Password=${TKVG_DB_PASSWORD}"
 
 volumes:
-  chat-info-data:
+  postgres-data:
     driver: local

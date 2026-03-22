@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using Microsoft.Extensions.Options;
-using Telegram.Bot;
+﻿using Microsoft.Extensions.Options;
 using TkvgSubstitution;
 using TkvgSubstitution.Models;
 using TkvgSubstitutionBot.Configuration;
@@ -11,24 +9,14 @@ namespace TkvgSubstitutionBot.Subscription;
 public class PeriodicalCheckService
 {
     private readonly ILogger<PeriodicalCheckService> _logger;
-    private readonly ITelegramBotClient _botClient;
-    private readonly ChatInfoFileStorage _chatInfoFileStorage;
-    private readonly IOptions<BotConfiguration> _botConfiguration;
     private readonly TkvgSubstitutionService _substitutionService;
     private readonly NotificationService _notificationService;
 
-    public PeriodicalCheckService(ILogger<PeriodicalCheckService> logger, 
-        ITelegramBotClient botClient, 
-        ChatInfoFileStorage chatInfoFileStorage, 
-        IOptions<BotConfiguration> botConfiguration, 
+    public PeriodicalCheckService(ILogger<PeriodicalCheckService> logger,
         TkvgSubstitutionService substitutionService,
         NotificationService notificationService)
     {
-        
         _logger = logger;
-        _botClient = botClient;
-        _chatInfoFileStorage = chatInfoFileStorage;
-        _botConfiguration = botConfiguration;
         _substitutionService = substitutionService;
         _notificationService = notificationService;
     }

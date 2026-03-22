@@ -8,12 +8,12 @@ namespace TkvgSubstitutionBot.BotServices;
 public class SubstitutionFrontendService
 {
     private readonly TkvgSubstitutionService _substitutionService;
-    private readonly ChatInfoFileStorage _chatInfoFileStorage;
+    private readonly ISubscriptionStorage _subscriptionStorage;
 
-    public SubstitutionFrontendService(TkvgSubstitutionService substitutionService, ChatInfoFileStorage chatInfoFileStorage)
+    public SubstitutionFrontendService(TkvgSubstitutionService substitutionService, ISubscriptionStorage subscriptionStorage)
     {
         _substitutionService = substitutionService;
-        _chatInfoFileStorage = chatInfoFileStorage;
+        _subscriptionStorage = subscriptionStorage;
     }
     
     public async Task<string> GetNextDaySubstitutions(string? className)
@@ -72,16 +72,12 @@ public class SubstitutionFrontendService
 
     public async Task<string> AddSubscription(long chatId, string className)
     {
-        await _chatInfoFileStorage.SetChatInfo(chatId, new ChatInfo
-        {
-            ChatId = chatId,
-            ClassName = className
-        });
+        await _subscriptionStorage.AddSubscription(chatId, className);
         return $"Добавлена подписка на замены для {className}. Теперь вы будете получать уведомления о заменах уроков на следующий учебный день.";
     }
 
     public async Task RemoveSubscription(long chatId)
     {
-        await _chatInfoFileStorage.DeleteChatInfo(chatId);
+        await _subscriptionStorage.RemoveAllSubscriptions(chatId);
     }
 }

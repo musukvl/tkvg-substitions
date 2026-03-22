@@ -5,10 +5,12 @@ Logging:
 
 AllowedHosts: "*"
   
+ConnectionStrings:
+  DefaultConnection: "Host=localhost;Port=5432;Database=tkvgbot;Username=tkvgbot;Password=tkvgbot"
+
 BotConfiguration:
     BotToken: 123:xxxxx
     SubstitutionsCheckPeriod: 1h
-    ChatInfoDirectory: ./chat-info
     
 SubstitutionCache:
   CacheDuration: 1h
