@@ -78,6 +78,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<ISubscriptionStorage, PostgresSubscriptionStorage>();
 
 // BotServices
+builder.Services.AddSingleton<ConversationStateService>();
 builder.Services.AddScoped<UpdateHandler>();
 builder.Services.AddScoped<SubstitutionFrontendService>();
 

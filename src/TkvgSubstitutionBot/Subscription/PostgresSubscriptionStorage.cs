@@ -49,12 +49,26 @@ public class PostgresSubscriptionStorage : ISubscriptionStorage
             .ExecuteDeleteAsync();
     }
 
+    public async Task RemoveSubscription(long chatId, string className)
+    {
+        await _db.Subscriptions
+            .Where(s => s.ChatId == chatId && s.ClassName == className)
+            .ExecuteDeleteAsync();
+    }
+
     public async Task<List<SubscriptionEntity>> GetSubscriptionsForClass(string className)
     {
         return await _db.Subscriptions
             .Where(s => s.ClassName == className
                         || s.ClassName + "_ring" == className
                         || s.ClassName == "all")
+            .ToListAsync();
+    }
+
+    public async Task<List<SubscriptionEntity>> GetSubscriptionsForChat(long chatId)
+    {
+        return await _db.Subscriptions
+            .Where(s => s.ChatId == chatId)
             .ToListAsync();
     }
 

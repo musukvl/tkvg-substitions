@@ -1,6 +1,8 @@
 ﻿using System.Text;
 using TkvgSubstitution;
 using TkvgSubstitution.Models;
+using TkvgSubstitutionBot.BotControls;
+using TkvgSubstitutionBot.Data;
 using TkvgSubstitutionBot.Subscription;
 
 namespace TkvgSubstitutionBot.BotServices;
@@ -73,11 +75,33 @@ public class SubstitutionFrontendService
     public async Task<string> AddSubscription(long chatId, string className)
     {
         await _subscriptionStorage.AddSubscription(chatId, className);
-        return $"Добавлена подписка на замены для {className}. Теперь вы будете получать уведомления о заменах уроков на следующий учебный день.";
+        var display = className == "all" ? "Все" : ClassNameUtils.ToDisplayFormat(className);
+        return $"Добавлена подписка на замены для {display}. Теперь вы будете получать уведомления о заменах уроков на следующий учебный день.";
     }
 
     public async Task RemoveSubscription(long chatId)
     {
         await _subscriptionStorage.RemoveAllSubscriptions(chatId);
+    }
+
+    public async Task<(string message, List<SubscriptionEntity> subscriptions)> GetMySubscriptions(long chatId)
+    {
+        var subs = await _subscriptionStorage.GetSubscriptionsForChat(chatId);
+        if (subs.Count == 0)
+            return ("У вас нет активных подписок.", subs);
+        var sb = new StringBuilder("Ваши подписки:\n");
+        foreach (var sub in subs)
+        {
+            var display = sub.ClassName == "all" ? "Все" : ClassNameUtils.ToDisplayFormat(sub.ClassName);
+            sb.AppendLine($"- {display}");
+        }
+        return (sb.ToString(), subs);
+    }
+
+    public async Task<string> RemoveSingleSubscription(long chatId, string className)
+    {
+        await _subscriptionStorage.RemoveSubscription(chatId, className);
+        var display = className == "all" ? "Все" : ClassNameUtils.ToDisplayFormat(className);
+        return $"Подписка на {display} отменена.";
     }
 }

@@ -156,4 +156,49 @@ public class PostgresSubscriptionStorageTests : IAsyncLifetime
         var subs = await _storage.GetSubscriptionsForClass("3.a");
         Assert.Equal(2, subs.Count);
     }
+
+    [Fact]
+    public async Task GetSubscriptionsForChat_ReturnsAllForUser()
+    {
+        await _storage.AddSubscription(100, "3.a");
+        await _storage.AddSubscription(100, "4.b");
+        await _storage.AddSubscription(200, "3.a");
+
+        var subs = await _storage.GetSubscriptionsForChat(100);
+        Assert.Equal(2, subs.Count);
+        Assert.Contains(subs, s => s.ClassName == "3.a");
+        Assert.Contains(subs, s => s.ClassName == "4.b");
+    }
+
+    [Fact]
+    public async Task GetSubscriptionsForChat_EmptyForUnknownUser()
+    {
+        var subs = await _storage.GetSubscriptionsForChat(999);
+        Assert.Empty(subs);
+    }
+
+    [Fact]
+    public async Task RemoveSubscription_RemovesSingleClass()
+    {
+        await _storage.AddSubscription(100, "3.a");
+        await _storage.AddSubscription(100, "4.b");
+
+        await _storage.RemoveSubscription(100, "3.a");
+
+        var subs = await _storage.GetSubscriptionsForChat(100);
+        Assert.Single(subs);
+        Assert.Equal("4.b", subs[0].ClassName);
+    }
+
+    [Fact]
+    public async Task RemoveSubscription_DoesNotAffectOtherUsers()
+    {
+        await _storage.AddSubscription(100, "3.a");
+        await _storage.AddSubscription(200, "3.a");
+
+        await _storage.RemoveSubscription(100, "3.a");
+
+        var subs = await _storage.GetSubscriptionsForChat(200);
+        Assert.Single(subs);
+    }
 }

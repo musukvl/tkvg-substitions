@@ -22,6 +22,7 @@ public class BotBackgroundService(IServiceProvider serviceProvider, ILogger<BotB
             new() { Command = "today_substitutions", Description = "Замены на сегодня" },
             new() { Command = "subscribe", Description = "Подписаться на уведомления о заменах" },
             new() { Command = "unsubscribe", Description = "Отписаться от уведомлений" },
+            new() { Command = "my_subscriptions", Description = "Мои подписки" },
         ], cancellationToken: stoppingToken);
 
         telegramBot.OnMessage += async (msg, type) =>
