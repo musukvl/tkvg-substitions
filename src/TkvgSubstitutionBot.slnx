@@ -1,0 +1,11 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="Tkvg.Cli/Tkvg.Cli.csproj" />
+  <Project Path="TkvgSubstitution/TkvgSubstitution.csproj" />
+  <Project Path="TkvgSubstitutionBot/TkvgSubstitutionBot.csproj" />
+  <Project Path="UnitTests/UnitTests.csproj" />
+</Solution>

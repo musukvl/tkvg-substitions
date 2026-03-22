@@ -43,7 +43,7 @@ public class TkvgSubstitutionReader
 
             if (string.IsNullOrEmpty(className)) continue;
 
-            var rows = section.SelectNodes(".//div[contains(@class, 'row')]");
+            var rows = section.SelectNodes(".//div[contains(@class, 'rows')]/div");
             var substitutions = new List<Substitution>();
 
             if (rows != null)

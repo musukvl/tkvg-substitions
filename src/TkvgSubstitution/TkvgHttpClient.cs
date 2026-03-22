@@ -9,7 +9,7 @@ public class TkvgHttpClient
         _httpClient = httpClient;
     }
 
-    public async Task<string> GetSubstitutionsHtml(string date)
+    public virtual async Task<string> GetSubstitutionsHtml(string date)
     {
         var request = """
                       {"__args":[null,{"date":"yyyy-mm-dd","mode":"classes"}],"__gsh":"00000000"}
