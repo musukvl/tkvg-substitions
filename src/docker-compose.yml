@@ -5,9 +5,11 @@ services:
     image: musukvl/tkvg-substitution-bot:1.0.3
     container_name: tkvgbot
     restart: always
+    env_file:
+      - .env
     environment:
       ASPNETCORE_URLS: http://0.0.0.0:8080
-      BotConfiguration__BotToken: ${TG_BOT_TOKEN}
+      BotConfiguration__BotToken: ${TKVG_BOT_TOKEN}
       BotConfiguration__ChatInfoDirectory: /chat-info
     volumes:
       - chat-info-data:/chat-info

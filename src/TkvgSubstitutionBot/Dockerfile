@@ -1,6 +1,6 @@
 
 # Use the official .NET SDK image for building the application
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 
 # Set the working directory
 WORKDIR /src
@@ -12,7 +12,7 @@ WORKDIR /src/TkvgSubstitutionBot
 RUN dotnet publish -c Release -o /src/out
 
 
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 
 # Set the working directory
 WORKDIR /app
