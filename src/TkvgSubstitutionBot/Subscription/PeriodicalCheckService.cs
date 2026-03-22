@@ -11,22 +11,29 @@ public class PeriodicalCheckService
     private readonly ILogger<PeriodicalCheckService> _logger;
     private readonly TkvgSubstitutionService _substitutionService;
     private readonly NotificationService _notificationService;
+    private readonly IOptions<BotConfiguration> _botConfiguration;
 
     public PeriodicalCheckService(ILogger<PeriodicalCheckService> logger,
         TkvgSubstitutionService substitutionService,
-        NotificationService notificationService)
+        NotificationService notificationService,
+        IOptions<BotConfiguration> botConfiguration)
     {
         _logger = logger;
         _substitutionService = substitutionService;
         _notificationService = notificationService;
+        _botConfiguration = botConfiguration;
     }
     
     public async Task DoCheck()
     {
-        // avoid sending notifications at night
-        if (DateTime.Now.Hour < 16 || DateTime.Now.Hour > 23)
+        if (IsInSilentPeriod(DateTime.Now.Hour,
+                _botConfiguration.Value.SilentPeriodStartHour,
+                _botConfiguration.Value.SilentPeriodEndHour))
         {
-            _logger.LogDebug("Skipping check at night");
+            _logger.LogDebug(
+                "Skipping check in silent period ({StartHour}:00-{EndHour}:59)",
+                _botConfiguration.Value.SilentPeriodStartHour,
+                _botConfiguration.Value.SilentPeriodEndHour);
             return;
         }
         var nextWorkingDay = Utils.GetNextWorkingDay(DateTime.Now).ToString("yyyy-MM-dd");
@@ -60,6 +67,16 @@ public class PeriodicalCheckService
     private void SaveCheck(Dictionary<string, ClassSubstitutions> previousSubstitutions)
     {
         _previousSubstitutions = previousSubstitutions;   
+    }
+
+    private static bool IsInSilentPeriod(int currentHour, int silentStartHour, int silentEndHour)
+    {
+        if (silentStartHour <= silentEndHour)
+        {
+            return currentHour >= silentStartHour && currentHour <= silentEndHour;
+        }
+
+        return currentHour >= silentStartHour || currentHour <= silentEndHour;
     }
 
 }

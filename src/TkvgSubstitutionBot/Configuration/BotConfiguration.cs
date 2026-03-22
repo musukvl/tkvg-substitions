@@ -7,4 +7,6 @@ public class BotConfiguration
 {
     public required string BotToken { get; set; }
     public required TimeSpan SubstitutionsCheckPeriod { get; set; }
+    public required int SilentPeriodStartHour { get; set; }
+    public required int SilentPeriodEndHour { get; set; }
 }

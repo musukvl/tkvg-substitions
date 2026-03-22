@@ -39,6 +39,8 @@ builder.Services.Configure<BotConfiguration>(options =>
     var parsedConfig = rawConfig.Parse();
     options.BotToken = parsedConfig.BotToken;
     options.SubstitutionsCheckPeriod = parsedConfig.SubstitutionsCheckPeriod;
+    options.SilentPeriodStartHour = parsedConfig.SilentPeriodStartHour;
+    options.SilentPeriodEndHour = parsedConfig.SilentPeriodEndHour;
 });
 
 builder.Services.Configure<SubstitutionCacheSettings>(options =>
