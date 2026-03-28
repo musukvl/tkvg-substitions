@@ -5,6 +5,7 @@ namespace TkvgSubstitutionBot.Data;
 public class AppDbContext : DbContext
 {
     public DbSet<SubscriptionEntity> Subscriptions { get; set; } = null!;
+    public DbSet<SubscriptionReceiveLogEntity> SubscriptionReceiveLogs { get; set; } = null!;
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
@@ -24,6 +25,20 @@ public class AppDbContext : DbContext
             entity.HasIndex(e => e.ChatId);
             entity.HasIndex(e => e.ClassName);
             entity.HasIndex(e => new { e.ChatId, e.ClassName }).IsUnique();
+        });
+
+        modelBuilder.Entity<SubscriptionReceiveLogEntity>(entity =>
+        {
+            entity.ToTable("subscription_receive_log");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.ReceivedAt).HasColumnName("received_at").HasDefaultValueSql("NOW()");
+            entity.Property(e => e.ClassName).HasColumnName("class_name").HasMaxLength(50);
+            entity.Property(e => e.ChatId).HasColumnName("chat_id");
+            entity.Property(e => e.MessageText).HasColumnName("message_text");
+            entity.HasIndex(e => e.ReceivedAt);
+            entity.HasIndex(e => e.ChatId);
+            entity.HasIndex(e => e.ClassName);
         });
     }
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Telegram.Bot;
 using TkvgSubstitution;
@@ -78,6 +78,7 @@ builder.Services.AddTransient<TkvgSubstitutionService>();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<ISubscriptionStorage, PostgresSubscriptionStorage>();
+builder.Services.AddScoped<ISubscriptionReceiveLog, PostgresSubscriptionReceiveLog>();
 
 // BotServices
 builder.Services.AddSingleton<ConversationStateService>();

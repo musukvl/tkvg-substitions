@@ -8,14 +8,16 @@ public class NotificationService
 {
     private readonly ILogger<NotificationService> _logger;
     private readonly ISubscriptionStorage _subscriptionStorage;
+    private readonly ISubscriptionReceiveLog _receiveLog;
     private readonly ITelegramBotClient _botClient;
     private readonly SubstitutionFrontendService _substitutionFrontend;
 
     public NotificationService(ILogger<NotificationService> logger,
-        ISubscriptionStorage subscriptionStorage, ITelegramBotClient botClient, SubstitutionFrontendService substitutionFrontend)
+        ISubscriptionStorage subscriptionStorage, ISubscriptionReceiveLog receiveLog, ITelegramBotClient botClient, SubstitutionFrontendService substitutionFrontend)
     {
         _logger = logger;
         _subscriptionStorage = subscriptionStorage;
+        _receiveLog = receiveLog;
         _botClient = botClient;
         _substitutionFrontend = substitutionFrontend;
     }
@@ -31,6 +33,7 @@ public class NotificationService
                 continue;
             await _subscriptionStorage.UpdateLastMessage(subscription.Id, message);
             await _botClient.SendMessage(subscription.ChatId, message);
+            await _receiveLog.AppendAsync(subscription.ChatId, classSubstitutions.ClassName, message);
         }
     }
 }
