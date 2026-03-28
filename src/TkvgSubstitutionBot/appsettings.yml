@@ -9,8 +9,8 @@ ConnectionStrings:
   DefaultConnection: "Host=localhost;Port=5432;Database=tkvgbot;Username=tkvgbot;Password=tkvgbot"
 
 BotConfiguration:
-    BotToken: 123:xxxxx
-    SubstitutionsCheckPeriod: 1h
+  BotToken: 123:xxxxx
+  SubstitutionsCheckPeriod: 1h
   SilentPeriodStartHour: 0
   SilentPeriodEndHour: 16
     
