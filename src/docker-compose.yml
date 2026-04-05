@@ -16,6 +16,9 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - tkvg-network
+      - homelab-network
 
   tkvgbot:
     build:
@@ -31,8 +34,18 @@ services:
     environment:
       ASPNETCORE_URLS: http://0.0.0.0:8080
       BotConfiguration__BotToken: ${TKVG_BOT_TOKEN}
-      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=tkvgbot;Username=tkvgbot;Password=${TKVG_DB_PASSWORD}"
+      ConnectionStrings__DefaultConnection: "Host=tkvgbot-db;Port=5432;Database=tkvgbot;Username=tkvgbot;Password=${TKVG_DB_PASSWORD}"
+    networks:
+      - tkvg-network
+      - homelab-network
 
 volumes:
   postgres-data:
     driver: local
+
+networks:
+  tkvg-network:
+    driver: bridge
+  homelab-network:
+    external: true
+    name: homelab-network
