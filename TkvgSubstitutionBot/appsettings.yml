@@ -25,6 +25,8 @@ Serilog:
     Default: Debug
     Override:
       Microsoft.AspNetCore: Warning
+      Microsoft: Warning
+      System: Warning
   WriteTo:
     #- Name: File
     #  Args:
