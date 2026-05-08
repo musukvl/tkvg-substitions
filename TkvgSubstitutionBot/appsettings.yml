@@ -12,7 +12,7 @@ BotConfiguration:
   BotToken: 123:xxxxx
   SubstitutionsCheckPeriod: 1h
   SilentPeriodStartHour: 0
-  SilentPeriodEndHour: 16
+  SilentPeriodEndHour: 7
     
 SubstitutionCache:
   CacheDuration: 1h

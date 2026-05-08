@@ -32,6 +32,7 @@ services:
     env_file:
       - .env
     environment:
+      TZ: Europe/Tallinn
       ASPNETCORE_URLS: http://0.0.0.0:8080
       BotConfiguration__BotToken: ${TKVG_BOT_TOKEN}
       ConnectionStrings__DefaultConnection: "Host=tkvgbot-db;Port=5432;Database=tkvgbot;Username=tkvgbot;Password=${TKVG_DB_PASSWORD}"
