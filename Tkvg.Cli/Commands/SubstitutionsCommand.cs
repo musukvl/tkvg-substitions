@@ -21,7 +21,7 @@ public class SubstitutionsCommandSettings : CommandSettings
 
 public class SubstitutionsCommand : AsyncCommand<SubstitutionsCommandSettings>
 {
-    public override async Task<int> ExecuteAsync(CommandContext context, SubstitutionsCommandSettings settings, CancellationToken cancellation)
+    protected override async Task<int> ExecuteAsync(CommandContext context, SubstitutionsCommandSettings settings, CancellationToken cancellation)
     {
         if (!DateOnly.TryParseExact(settings.Date, "dd.MM", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
         {
